@@ -1,0 +1,689 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://flutterdev.at/schemas/ddl/0.1/ddl-schema.json",
+  "title": "DDL (Diashow Description Language)",
+  "description": "Schema for DDL show definition files (.ddl.json).",
+  "type": "object",
+  "required": ["ddl", "defaults", "show"],
+  "additionalProperties": false,
+  "properties": {
+    "ddl": {
+      "type": "string",
+      "const": "0.1",
+      "description": "DDL specification version."
+    },
+    "meta": { "$ref": "#/$defs/meta" },
+    "defaults": { "$ref": "#/$defs/defaults" },
+    "show": {
+      "type": "array",
+      "description": "Ordered list of slides.",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/slide" }
+    }
+  },
+
+  "$defs": {
+
+    "hexColor": {
+      "type": "string",
+      "pattern": "^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$",
+      "description": "Hex colour — #RRGGBB or #AARRGGBB."
+    },
+
+    "rgbaColor": {
+      "type": "string",
+      "pattern": "^rgba\\(\\s*\\d{1,3}\\s*,\\s*\\d{1,3}\\s*,\\s*\\d{1,3}\\s*,\\s*(0|1|0?\\.\\d+)\\s*\\)$",
+      "description": "RGBA colour — rgba(r,g,b,a) where a is 0.0-1.0."
+    },
+
+    "color": {
+      "description": "Colour value in hex or rgba format.",
+      "oneOf": [
+        { "$ref": "#/$defs/hexColor" },
+        { "$ref": "#/$defs/rgbaColor" }
+      ]
+    },
+
+    "curve": {
+      "type": "string",
+      "enum": [
+        "linear",
+        "easeIn",
+        "easeOut",
+        "easeInOut",
+        "bounceOut",
+        "bounceIn",
+        "elasticIn",
+        "elasticOut",
+        "decelerate",
+        "fastOutSlowIn"
+      ],
+      "description": "Animation easing curve."
+    },
+
+    "position": {
+      "type": "string",
+      "enum": [
+        "top",
+        "bottom",
+        "center",
+        "top-start",
+        "top-end",
+        "bottom-start",
+        "bottom-end"
+      ],
+      "description": "Screen position."
+    },
+
+    "alignment": {
+      "type": "string",
+      "enum": ["start", "center", "end"],
+      "description": "Text or content alignment."
+    },
+
+    "animateIn": {
+      "type": "string",
+      "enum": ["fade", "slideUp", "slideDown", "none"],
+      "description": "Entry animation type."
+    },
+
+    "fit": {
+      "type": "string",
+      "enum": ["cover", "contain", "fill", "fitWidth", "fitHeight"],
+      "description": "How media is fitted to the display area."
+    },
+
+    "meta": {
+      "type": "object",
+      "description": "Show-level metadata.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Human-readable title of the show."
+        },
+        "description": {
+          "type": "string",
+          "description": "Short description of the show."
+        },
+        "keywords": {
+          "type": "string",
+          "description": "Comma-separated keyword list."
+        },
+        "author": {
+          "type": "string",
+          "description": "Author name."
+        },
+        "licence_key": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}$",
+          "description": "Licence key (XXXX-XXXX-XXXX-XXXX). Validated by the display server in remote mode."
+        },
+        "bookmarks": {
+          "type": "object",
+          "description": "Persistent file references (macOS bookmarks, iOS photo IDs).",
+          "additionalProperties": { "type": "string" }
+        }
+      },
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+
+    "transition": {
+      "type": "object",
+      "description": "Slide transition configuration.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "fade",
+            "slide",
+            "zoom",
+            "flip",
+            "wipe",
+            "cube",
+            "morph",
+            "dissolve",
+            "glitch",
+            "blur",
+            "zoom_reveal",
+            "iris",
+            "fade_color",
+            "none"
+          ],
+          "default": "fade",
+          "description": "Transition animation type."
+        },
+        "duration": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 600,
+          "description": "Transition duration in milliseconds."
+        },
+        "curve": {
+          "$ref": "#/$defs/curve",
+          "default": "easeInOut"
+        },
+        "direction": {
+          "type": "string",
+          "enum": ["left", "right", "up", "down"],
+          "default": "left",
+          "description": "Movement direction (slide, wipe, cube)."
+        },
+        "axis": {
+          "type": "string",
+          "enum": ["horizontal", "vertical"],
+          "default": "horizontal",
+          "description": "Rotation axis (flip)."
+        },
+        "scale_from": {
+          "type": "number",
+          "minimum": 1.0,
+          "default": 1.2,
+          "description": "Initial scale factor (zoom, zoom_reveal)."
+        },
+        "block_size": {
+          "type": "number",
+          "minimum": 1,
+          "default": 20,
+          "description": "Block size in pixels (dissolve)."
+        },
+        "intensity": {
+          "type": "number",
+          "minimum": 1,
+          "default": 20,
+          "description": "Effect intensity (glitch)."
+        },
+        "sigma": {
+          "type": "number",
+          "minimum": 1,
+          "default": 20,
+          "description": "Gaussian blur sigma (blur)."
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["in", "out"],
+          "default": "in",
+          "description": "Zoom direction (zoom_reveal)."
+        },
+        "shape": {
+          "type": "string",
+          "enum": ["circle", "diamond", "rectangle"],
+          "default": "circle",
+          "description": "Reveal shape (iris)."
+        },
+        "color": {
+          "$ref": "#/$defs/hexColor",
+          "default": "#000000",
+          "description": "Fade-through colour (fade_color)."
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "audio": {
+      "type": "object",
+      "description": "Audio configuration.",
+      "required": ["src"],
+      "properties": {
+        "src": {
+          "type": "string",
+          "description": "URI to audio file."
+        },
+        "volume": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 1.0,
+          "description": "Playback volume."
+        },
+        "loop": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to loop audio."
+        },
+        "fade_in": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Fade-in duration in milliseconds."
+        },
+        "fade_out": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Fade-out duration in milliseconds."
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "kenBurnsEndpoint": {
+      "type": "object",
+      "description": "Ken Burns focal point and scale.",
+      "properties": {
+        "x": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.5,
+          "description": "Focal point X (0 = left, 1 = right)."
+        },
+        "y": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.5,
+          "description": "Focal point Y (0 = top, 1 = bottom)."
+        },
+        "scale": {
+          "type": "number",
+          "minimum": 1.0,
+          "default": 1.0,
+          "description": "Zoom scale factor."
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "kenBurns": {
+      "type": "object",
+      "description": "Ken Burns pan-and-zoom animation.",
+      "properties": {
+        "from": {
+          "$ref": "#/$defs/kenBurnsEndpoint",
+          "description": "Starting focal point and scale."
+        },
+        "to": {
+          "$ref": "#/$defs/kenBurnsEndpoint",
+          "description": "Ending focal point and scale."
+        },
+        "curve": {
+          "$ref": "#/$defs/curve",
+          "default": "linear"
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "captionStyle": {
+      "type": "object",
+      "description": "Caption text styling.",
+      "properties": {
+        "title_size": {
+          "type": "number",
+          "minimum": 1,
+          "default": 20,
+          "description": "Title font size in logical pixels."
+        },
+        "subtitle_size": {
+          "type": "number",
+          "minimum": 1,
+          "default": 14,
+          "description": "Subtitle font size in logical pixels."
+        },
+        "color": {
+          "$ref": "#/$defs/color",
+          "default": "#FFFFFF",
+          "description": "Text colour."
+        },
+        "background": {
+          "$ref": "#/$defs/color",
+          "default": "rgba(0,0,0,0.5)",
+          "description": "Background colour with alpha."
+        },
+        "padding": {
+          "type": "number",
+          "minimum": 0,
+          "default": 12,
+          "description": "Padding around text in logical pixels."
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "caption": {
+      "type": "object",
+      "description": "Text overlay on a slide.",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Main caption text."
+        },
+        "subtitle": {
+          "type": "string",
+          "description": "Secondary caption text."
+        },
+        "position": {
+          "$ref": "#/$defs/position",
+          "default": "bottom-start"
+        },
+        "align": {
+          "$ref": "#/$defs/alignment",
+          "default": "start"
+        },
+        "animate_in": {
+          "$ref": "#/$defs/animateIn",
+          "default": "fade"
+        },
+        "delay": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 400,
+          "description": "Delay before caption appears in milliseconds."
+        },
+        "style": {
+          "$ref": "#/$defs/captionStyle"
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "laserPointer": {
+      "type": "object",
+      "description": "Presenter-mode laser pointer.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether laser pointer is available."
+        },
+        "color": {
+          "$ref": "#/$defs/hexColor",
+          "default": "#FF0000",
+          "description": "Dot colour."
+        },
+        "size": {
+          "type": "number",
+          "minimum": 1,
+          "default": 20,
+          "description": "Dot diameter in logical pixels."
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "motionGestureToggle": {
+      "type": "object",
+      "description": "On-screen toggle button for motion gestures.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to show toggle button."
+        },
+        "position": {
+          "$ref": "#/$defs/position",
+          "default": "bottom-end"
+        },
+        "offset_x": {
+          "type": "number",
+          "default": 0,
+          "description": "Horizontal offset in logical pixels."
+        },
+        "offset_y": {
+          "type": "number",
+          "default": 0,
+          "description": "Vertical offset in logical pixels."
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "motionGesture": {
+      "type": "object",
+      "description": "Accelerometer-based slide navigation.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether motion gesture detection is enabled."
+        },
+        "threshold": {
+          "type": "number",
+          "default": 15.0,
+          "description": "Minimum acceleration (m/s^2) to trigger."
+        },
+        "cooldown": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 600,
+          "description": "Minimum milliseconds between triggers."
+        },
+        "toggle": {
+          "$ref": "#/$defs/motionGestureToggle"
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "widget": {
+      "type": "object",
+      "description": "Overlay widget (clock, timer, weather, logo, etc.).",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Widget type name (e.g. clock, timer, weather, logo, sensor)."
+        },
+        "parameter": {
+          "type": "object",
+          "description": "Widget-specific configuration.",
+          "additionalProperties": true
+        },
+        "target": {
+          "type": "string",
+          "enum": ["client", "server", "both"],
+          "default": "both",
+          "description": "Where the widget is displayed in remote mode."
+        },
+        "position": {
+          "$ref": "#/$defs/position",
+          "default": "bottom-start"
+        },
+        "offset_x": {
+          "type": "number",
+          "default": 0,
+          "description": "Horizontal offset in logical pixels."
+        },
+        "offset_y": {
+          "type": "number",
+          "default": 0,
+          "description": "Vertical offset in logical pixels."
+        },
+        "align": {
+          "$ref": "#/$defs/alignment",
+          "default": "start"
+        },
+        "animate_in": {
+          "$ref": "#/$defs/animateIn",
+          "default": "fade"
+        },
+        "delay": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Delay before widget appears in milliseconds."
+        },
+        "z_index": {
+          "type": "integer",
+          "default": 0,
+          "description": "Stacking order (higher = on top)."
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "defaults": {
+      "type": "object",
+      "description": "Global defaults applied to all slides unless overridden.",
+      "properties": {
+        "duration": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000,
+          "default": 4000,
+          "description": "Slide display duration in milliseconds (max 1 hour)."
+        },
+        "fit": {
+          "$ref": "#/$defs/fit",
+          "default": "cover"
+        },
+        "loop": {
+          "type": "boolean",
+          "default": true,
+          "description": "Loop back to first slide after last."
+        },
+        "autoplay": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically advance slides."
+        },
+        "shuffle": {
+          "type": "boolean",
+          "default": false,
+          "description": "Randomise slide order."
+        },
+        "show_info": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show info overlay button."
+        },
+        "show_progress": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show progress bar."
+        },
+        "show_dots": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show dot indicators."
+        },
+        "show_title": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show slide title and subtitle caption overlay."
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["auto", "presenter"],
+          "default": "auto",
+          "description": "Playback mode."
+        },
+        "slide_control": {
+          "type": "string",
+          "enum": ["both", "swipe", "chevrons"],
+          "default": "both",
+          "description": "Presenter-mode navigation type."
+        },
+        "preload": {
+          "type": "string",
+          "enum": ["none", "adjacent", "all"],
+          "default": "adjacent",
+          "description": "Image preload strategy."
+        },
+        "background_color": {
+          "$ref": "#/$defs/hexColor",
+          "default": "#000000",
+          "description": "Player background colour."
+        },
+        "video_sound": {
+          "type": "string",
+          "enum": ["client", "server", "both"],
+          "default": "server",
+          "description": "Where video audio plays in remote mode."
+        },
+        "transition": {
+          "$ref": "#/$defs/transition"
+        },
+        "audio": {
+          "$ref": "#/$defs/audio"
+        },
+        "laser_pointer": {
+          "$ref": "#/$defs/laserPointer"
+        },
+        "motion_gesture": {
+          "$ref": "#/$defs/motionGesture"
+        },
+        "image_cache": {
+          "type": "boolean",
+          "default": true,
+          "description": "Cache web images on disk. Set to false for shows whose server images change frequently — images are always fetched fresh and never written to the cache."
+        },
+        "widgets": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/widget" },
+          "description": "Global overlay widgets."
+        },
+        "sensor_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "WebSocket URL for the environment sensor service."
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "slide": {
+      "type": "object",
+      "description": "A single slide in the show.",
+      "required": ["src"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the slide."
+        },
+        "type": {
+          "type": "string",
+          "enum": ["image", "video", "lottie", "web", "pdf"],
+          "default": "image",
+          "description": "Slide media type."
+        },
+        "src": {
+          "type": "string",
+          "description": "URI to media file (https://, asset://, file://, or bare path)."
+        },
+        "duration": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000,
+          "description": "Display duration in milliseconds (overrides default, max 1 hour)."
+        },
+        "fit": {
+          "$ref": "#/$defs/fit",
+          "description": "Image fit mode (overrides default)."
+        },
+        "transition": {
+          "$ref": "#/$defs/transition",
+          "description": "Transition to next slide (overrides default)."
+        },
+        "ken_burns": {
+          "$ref": "#/$defs/kenBurns"
+        },
+        "caption": {
+          "$ref": "#/$defs/caption"
+        },
+        "audio": {
+          "$ref": "#/$defs/audio",
+          "description": "Per-slide audio (overrides global)."
+        },
+        "video_sound": {
+          "type": "string",
+          "enum": ["client", "server", "both"],
+          "description": "Video audio routing (overrides default)."
+        },
+        "widgets": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/widget" },
+          "description": "Per-slide overlay widgets."
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Arbitrary custom metadata.",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

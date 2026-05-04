@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DDL — Diashow Description Language · Specification v1.0</title>
+<style>
+  :root {
+    --accent: #2E4A9E;
+    --accent2: #1A8C6E;
+    --warn: #B85C00;
+    --bg: #FAFAFA;
+    --card: #FFFFFF;
+    --border: #D8DDE6;
+    --text: #1A1A2E;
+    --muted: #5A6070;
+    --code-bg: #F0F4FF;
+    --code-border: #C2CDE8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text);
+    background: var(--bg);
+    padding: 0;
+  }
+
+  /* Cover */
+  .cover {
+    background: linear-gradient(135deg, #1B2D6B 0%, #2E4A9E 55%, #1A8C6E 100%);
+    color: white;
+    padding: 64px 80px 56px;
+  }
+
+  .cover-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.75;
+    margin-bottom: 16px;
+  }
+
+  .cover h1 {
+    font-size: 42px;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+
+  .cover-sub {
+    font-size: 20px;
+    opacity: 0.85;
+    font-weight: 300;
+    margin-bottom: 32px;
+  }
+
+  .cover-meta {
+    display: flex;
+    gap: 40px;
+    font-size: 13px;
+    opacity: 0.8;
+    border-top: 1px solid rgba(255,255,255,0.25);
+    padding-top: 20px;
+    margin-top: 8px;
+  }
+
+  .cover-meta span strong { display: block; opacity: 1; font-weight: 700; font-size: 14px; }
+
+  /* Layout */
+  .content {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 56px 48px;
+  }
+
+  /* Callout box */
+  .callout {
+    background: #EEF3FF;
+    border-left: 4px solid var(--accent);
+    padding: 16px 20px;
+    border-radius: 0 8px 8px 0;
+    margin: 24px 0;
+    font-size: 14px;
+  }
+  .callout.green { background: #E8F7F3; border-color: var(--accent2); }
+  .callout.orange { background: #FFF4E8; border-color: var(--warn); }
+
+  .callout strong { display: block; margin-bottom: 4px; font-size: 13px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--accent); }
+  .callout.green strong { color: var(--accent2); }
+  .callout.orange strong { color: var(--warn); }
+
+  /* Headings */
+  h2 {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 56px 0 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 32px 0 10px;
+  }
+
+  h4 {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted);
+    margin: 24px 0 8px;
+  }
+
+  p { margin-bottom: 14px; }
+
+  /* Code */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 16px 0 24px;
+    font-family: "Fira Code", "Cascadia Code", "Consolas", monospace;
+  }
+
+  code {
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: 13px;
+    font-family: "Fira Code", "Consolas", monospace;
+  }
+
+  pre code { background: none; border: none; padding: 0; font-size: inherit; }
+
+  /* Syntax coloring */
+  .kw { color: #6B4FBB; font-weight: 600; }   /* keywords / keys */
+  .str { color: #1A7A4A; }                      /* strings */
+  .num { color: #B05A00; }                      /* numbers */
+  .cmt { color: #8A94A6; font-style: italic; }  /* comments */
+  .prop { color: #1A6089; }                     /* properties */
+  .punc { color: #5A6070; }                     /* punctuation */
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 28px;
+    font-size: 14px;
+  }
+
+  thead tr { background: var(--accent); color: white; }
+  thead th { padding: 10px 14px; text-align: left; font-weight: 600; }
+  tbody tr:nth-child(even) { background: #F4F6FC; }
+  tbody td { padding: 9px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tbody td code { font-size: 12px; }
+
+  /* Section number badge */
+  .sec-num {
+    display: inline-block;
+    background: var(--accent);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  /* Status badge */
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 12px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .badge-draft { background: #FFF0CC; color: #7A5000; border: 1px solid #F0C842; }
+  .badge-proposed { background: #E0EAFF; color: #1B3080; border: 1px solid #A0B8F0; }
+  .badge-released { background: #D4EDDA; color: #155724; border: 1px solid #7BC47F; }
+
+  /* Divider */
+  hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+  /* Schema table */
+  .schema-block {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 20px 0;
+  }
+
+  .schema-block table { margin: 0; }
+  .schema-block thead tr { background: #EEF3FF; color: var(--accent); }
+  .schema-block thead th { border-bottom: 2px solid var(--border); }
+
+  /* Comparison grid */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .compare-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+  }
+  .compare-card h5 {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    color: var(--muted);
+  }
+  .compare-card ul { padding-left: 18px; font-size: 13.5px; }
+  .compare-card li { margin-bottom: 4px; }
+  .yes { color: #1A8C6E; }
+  .no { color: #c0392b; }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-label">Language Specification</div>
+  <h1>Diashow Description Language</h1>
+  <div class="cover-sub">DDL — A declarative DSL for controlling image slideshows in Flutter applications</div>
+  <div class="cover-meta">
+    <span><strong>Version</strong>1.0</span>
+    <span><strong>Date</strong>March 2026</span>
+    <span><strong>Status</strong><span class="badge badge-released">Released</span></span>
+    <span><strong>Format</strong>JSON</span>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- SECTION 1: Format Choice -->
+  <h2><span class="sec-num">§1</span>Encoding Format</h2>
+
+  <p>DDL files are valid <strong>JSON</strong> documents parsed by the Flutter runtime via <code>dart:convert</code>. For distribution and transfer, DDL shows can be packaged as <strong>DDLZ archives</strong> (see §12).</p>
+
+  <table>
+    <thead><tr><th>Property</th><th>JSON</th><th>DDLZ</th></tr></thead>
+    <tbody>
+      <tr><td>File extension</td><td><code>.ddl.json</code></td><td><code>.ddlz</code></td></tr>
+      <tr><td>Primary use</td><td>Runtime / API delivery / authoring</td><td>Self-contained distribution / transfer</td></tr>
+      <tr><td>Schema validation</td><td>JSON Schema (draft-07)</td><td>Validated after extraction</td></tr>
+      <tr><td>Flutter parsing</td><td>Native <code>dart:convert</code></td><td>ZIP extraction + JSON parse</td></tr>
+    </tbody>
+  </table>
+
+  <hr>
+
+  <!-- SECTION 2: Top-level Structure -->
+  <h2><span class="sec-num">§2</span>Document Structure</h2>
+
+  <p>Every DDL document is a single JSON object with four top-level keys:</p>
+
+<pre><code><span class="punc">{</span>
+  <span class="kw">"ddl"</span><span class="punc">:</span>      <span class="str">"0.1"</span><span class="punc">,</span>              <span class="cmt">// REQUIRED. DDL version string.</span>
+  <span class="kw">"meta"</span><span class="punc">:</span>     <span class="punc">{ ... }</span><span class="punc">,</span>        <span class="cmt">// OPTIONAL. Show-level metadata. See §2.2.</span>
+  <span class="kw">"defaults"</span><span class="punc">:</span> <span class="punc">{ ... }</span><span class="punc">,</span>        <span class="cmt">// OPTIONAL. Global fallbacks for all slides.</span>
+  <span class="kw">"show"</span><span class="punc">:</span>     <span class="punc">[ ... ]</span>          <span class="cmt">// REQUIRED. Ordered array of slide objects.</span>
+<span class="punc">}</span></code></pre>
+
+  <h3>2.1 Inheritance Model</h3>
+  <p>Each slide property is resolved by looking first at the slide itself, then falling back to <code>defaults</code>, then to the DDL built-in defaults shown in §4. This means a show with identical transitions can set them once in <code>defaults</code> and override only the exceptions per-slide.</p>
+
+  <h3>2.2 Metadata</h3>
+
+  <p>The optional <code>meta</code> object provides descriptive information about the show, analogous to HTML <code>&lt;meta&gt;</code> tags. Metadata is not interpreted by the DDL player at runtime — it is informational and intended for cataloguing, search indexing, or external tooling.</p>
+
+  <div class="schema-block">
+    <table>
+      <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>name</code></td><td>string</td><td>Human-readable name / title of the show.</td></tr>
+        <tr><td><code>description</code></td><td>string</td><td>Short description of the show's content or purpose.</td></tr>
+        <tr><td><code>keywords</code></td><td>string</td><td>Comma-separated keyword list for search / categorisation.</td></tr>
+        <tr><td><code>author</code></td><td>string</td><td>Name or identifier of the show's author.</td></tr>
+        <tr><td><em>any key</em></td><td>string</td><td>Arbitrary additional metadata entries. The parser preserves all unknown keys.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+<pre><code><span class="kw">"meta"</span><span class="punc">:</span> <span class="punc">{</span>
+  <span class="prop">"name"</span><span class="punc">:</span>        <span class="str">"European Sunsets"</span><span class="punc">,</span>
+  <span class="prop">"description"</span><span class="punc">:</span> <span class="str">"A sunset timelapse across European capitals"</span><span class="punc">,</span>
+  <span class="prop">"keywords"</span><span class="punc">:</span>    <span class="str">"sunset, timelapse, europe, capitals"</span><span class="punc">,</span>
+  <span class="prop">"author"</span><span class="punc">:</span>      <span class="str">"Jane Doe"</span><span class="punc">,</span>
+  <span class="prop">"created"</span><span class="punc">:</span>     <span class="str">"2026-03-01"</span><span class="punc">,</span>
+  <span class="prop">"license"</span><span class="punc">:</span>     <span class="str">"CC BY 4.0"</span>
+<span class="punc">}</span></code></pre>
+
+  <hr>
+
+  <!-- SECTION 3: The Slide Object -->
+  <h2><span class="sec-num">§3</span>The Slide Object</h2>
+
+  <p>Each entry in the <code>show</code> array is a <strong>Slide Object</strong>. Only <code>src</code> is required.</p>
+
+  <div class="schema-block">
+    <table>
+      <thead><tr><th>Property</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>src</code></td><td>string</td><td>✅ Yes</td><td>Image, video, Lottie, website, or PDF source URI. See §3.1 for URI schemes.</td></tr>
+        <tr><td><code>type</code></td><td>string enum</td><td>No</td><td><code>"image"</code> (default), <code>"video"</code>, <code>"lottie"</code>, <code>"web"</code>, or <code>"pdf"</code>. When <code>"video"</code>, the slide's <code>duration</code> is ignored (video length is used), <code>ken_burns</code> is disabled, and the laser pointer is suppressed. When <code>"lottie"</code>, the source must be a Lottie JSON file; the animation loops for the slide's <code>duration</code> (see §3.3). When <code>"web"</code> or <code>"pdf"</code>, the <code>src</code> is rendered for display only — all user interaction (scrolling, links, page turn, zoom) is suppressed so server and client stay in sync in remote mode. See §3.4.</td></tr>
+        <tr><td><code>id</code></td><td>string</td><td>No</td><td>Optional stable identifier for deep-linking or analytics.</td></tr>
+        <tr><td><code>duration</code></td><td>number</td><td>No</td><td>Display duration in milliseconds (0–3 600 000, max 1 hour). Ignored for video slides. Default: <code>4000</code>.</td></tr>
+        <tr><td><code>fit</code></td><td>string enum</td><td>No</td><td>Box fit mode. See §3.2. Default: <code>"cover"</code>.</td></tr>
+        <tr><td><code>transition</code></td><td>object</td><td>No</td><td>Outgoing transition to next slide. See §5.</td></tr>
+        <tr><td><code>ken_burns</code></td><td>object</td><td>No</td><td>Pan/zoom animation on this slide. See §6.</td></tr>
+        <tr><td><code>caption</code></td><td>object</td><td>No</td><td>Text overlay. See §7.</td></tr>
+        <tr><td><code>audio</code></td><td>object</td><td>No</td><td>Per-slide audio clip. See §8.</td></tr>
+        <tr><td><code>metadata</code></td><td>object</td><td>No</td><td>Free-form key/value bag for app-level use. Not interpreted by DDL runtime.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>3.1 Source URI Schemes</h3>
+
+  <table>
+    <thead><tr><th>Scheme</th><th>Example</th><th>Resolves To</th></tr></thead>
+    <tbody>
+      <tr><td><code>asset://</code></td><td><code>asset://images/paris.jpg</code></td><td>Flutter asset bundle (pubspec.yaml assets)</td></tr>
+      <tr><td><code>https://</code> / <code>http://</code></td><td><code>https://cdn.example.com/img.webp</code></td><td>Network image with optional caching headers</td></tr>
+      <tr><td><code>file://</code></td><td><code>file:///storage/DCIM/001.jpg</code></td><td>Device filesystem (requires permission)</td></tr>
+      <tr><td><code>memory://</code></td><td><code>memory://cached_key</code></td><td>In-memory image registry (app-managed)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3.2 Fit Modes</h3>
+  <p>These map 1:1 to Flutter's <code>BoxFit</code> enum:</p>
+
+  <table>
+    <thead><tr><th>Value</th><th>Flutter BoxFit</th><th>Effect</th></tr></thead>
+    <tbody>
+      <tr><td><code>"cover"</code> (default)</td><td><code>BoxFit.cover</code></td><td>Fill frame, cropping edges as needed</td></tr>
+      <tr><td><code>"contain"</code></td><td><code>BoxFit.contain</code></td><td>Show entire image with letterboxing</td></tr>
+      <tr><td><code>"fill"</code></td><td><code>BoxFit.fill</code></td><td>Stretch to fill (may distort)</td></tr>
+      <tr><td><code>"fitWidth"</code></td><td><code>BoxFit.fitWidth</code></td><td>Scale to frame width</td></tr>
+      <tr><td><code>"fitHeight"</code></td><td><code>BoxFit.fitHeight</code></td><td>Scale to frame height</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3.3 Lottie Animations</h3>
+
+  <p>When <code>"type"</code> is set to <code>"lottie"</code>, the <code>src</code> must point to a Lottie JSON animation file (either a local asset or a network URL). The animation loops continuously for the slide's <code>duration</code>. Ken Burns effects are not applied to Lottie slides. The <code>fit</code> property controls how the animation fills the viewport (defaults to <code>"contain"</code> for Lottie to preserve animation proportions).</p>
+
+<pre><code><span class="punc">{</span>
+  <span class="kw">"type"</span><span class="punc">:</span> <span class="str">"lottie"</span><span class="punc">,</span>
+  <span class="kw">"src"</span><span class="punc">:</span>  <span class="str">"asset://animations/intro.json"</span><span class="punc">,</span>
+  <span class="kw">"duration"</span><span class="punc">:</span> <span class="num">5000</span><span class="punc">,</span>
+  <span class="kw">"fit"</span><span class="punc">:</span> <span class="str">"contain"</span>
+<span class="punc">}</span></code></pre>
+
+  <div class="callout">
+    <strong>Implementation Note</strong>
+    The Flutter runtime uses the <a href="https://pub.dev/packages/lottie">lottie</a> package (v3.3.x). Asset sources are rendered via <code>Lottie.asset()</code>; network sources via <code>Lottie.network()</code>; file sources (from DDLZ extraction, §12) via <code>Lottie.file()</code>. The animation repeats in a loop with <code>repeat: true</code>.
+  </div>
+
+  <h3>3.4 Web &amp; PDF Slides — Display-Only by Design</h3>
+
+  <p>Diashow is a <strong>presenter</strong>, not a remote-maintenance or browsing tool. When <code>"type"</code> is set to <code>"web"</code> or <code>"pdf"</code>, the embedded content is rendered for display only — <strong>all user input is intentionally suppressed</strong>. Scrolling, link clicks, form input, page-turn gestures, pinch-zoom, and text selection are all blocked at the slide level.</p>
+
+  <p>This is a deliberate runtime guarantee, not a missing feature. It exists so that in <strong>remote presenter sync mode</strong> (§9) the server (display) and client (presenter) always render the same frame: neither side can diverge by interacting with the embedded web page or PDF. Slide advancement, timing, transitions, and the laser pointer remain driven entirely by the DDL show and the presenter controls.</p>
+
+  <table>
+    <thead><tr><th>Slide Type</th><th>Behavior</th><th>Suppressed Interactions</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>"web"</code></td>
+        <td>Renders the URL as a static visual frame. Page is loaded, JavaScript executes, animations play, but the user cannot interact with the page.</td>
+        <td>Scrolling, link navigation, form fields, text selection, pinch-zoom, context menus, video controls embedded in the page.</td>
+      </tr>
+      <tr>
+        <td><code>"pdf"</code></td>
+        <td>Renders the PDF document at its initial view. The slide displays a single, stable frame for the slide's <code>duration</code>.</td>
+        <td>Page turning, scrolling, pinch-zoom, text selection, internal link navigation, annotation interaction.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>Implementation Note</strong>
+    The Flutter runtime overlays an <code>AbsorbPointer</code> on top of the web view (<code>ddl_web_player.dart</code>) and the PDF viewer (<code>ddl_pdf_player.dart</code>) to consume all pointer events before they reach the embedded engine. On Linux, <code>"web"</code> slides open in an external window via <code>desktop_webview_window</code> because that backend does not support inline embedding; the in-show frame instead displays a placeholder.
+  </div>
+
+  <div class="callout">
+    <strong>Authoring Guidance</strong>
+    If a target needs to be browsed interactively (multi-page navigation, scrolling content, or live forms), it does not belong in a DDL show. Use the host operating system's browser or PDF reader instead. For multi-page PDF presentations, export each page as an image slide, or split the PDF into separate single-page documents and chain them as consecutive slides.
+  </div>
+
+  <div class="callout orange">
+    <strong>DDLZ &amp; Web Slides</strong>
+    <code>"web"</code> slides require live network access and are not bundled into <code>.ddlz</code> archives (§12). A DDLZ archive transferred over the WebSocket protocol will play web slides only if the receiving display has internet connectivity to the referenced URL.
+  </div>
+
+  <hr>
+
+  <!-- SECTION 4: Defaults Object -->
+  <h2><span class="sec-num">§4</span>The Defaults Object</h2>
+
+  <p>The <code>defaults</code> block sets show-wide fallbacks and global playback controls.</p>
+
+  <div class="schema-block">
+    <table>
+      <thead><tr><th>Property</th><th>Type</th><th>Built-in Default</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>duration</code></td><td>number</td><td><code>4000</code></td><td>Slide display time in ms (0–3 600 000, max 1 hour)</td></tr>
+        <tr><td><code>fit</code></td><td>string</td><td><code>"cover"</code></td><td>Default box fit for all slides</td></tr>
+        <tr><td><code>transition</code></td><td>object</td><td><code>{"type":"fade","duration":600}</code></td><td>Default outgoing transition</td></tr>
+        <tr><td><code>loop</code></td><td>boolean</td><td><code>true</code></td><td>Whether the show restarts after the last slide</td></tr>
+        <tr><td><code>autoplay</code></td><td>boolean</td><td><code>true</code></td><td>Whether the show plays automatically on load</td></tr>
+        <tr><td><code>shuffle</code></td><td>boolean</td><td><code>false</code></td><td>Randomise slide order at runtime</td></tr>
+        <tr><td><code>preload</code></td><td>string</td><td><code>"adjacent"</code></td><td>Preload strategy: <code>"none"</code>, <code>"adjacent"</code> (±1), <code>"all"</code></td></tr>
+        <tr><td><code>background_color</code></td><td>string</td><td><code>"#000000"</code></td><td>Frame fill behind images (CSS hex)</td></tr>
+        <tr><td><code>show_info</code></td><td>boolean</td><td><code>true</code></td><td>Whether to show the info button in the player UI</td></tr>
+        <tr><td><code>show_progress</code></td><td>boolean</td><td><code>true</code></td><td>Whether to show the timer progress bar</td></tr>
+        <tr><td><code>show_dots</code></td><td>boolean</td><td><code>true</code></td><td>Whether to show the slide dot indicator</td></tr>
+        <tr><td><code>show_title</code></td><td>boolean</td><td><code>true</code></td><td>Whether to show the slide title/subtitle caption overlay</td></tr>
+        <tr><td><code>mode</code></td><td>string</td><td><code>"auto"</code></td><td>Playback mode: <code>"auto"</code> (timer-driven) or <code>"presenter"</code> (swipe-controlled, timer disabled)</td></tr>
+        <tr><td><code>slide_control</code></td><td>string</td><td><code>"both"</code></td><td>Presenter slide navigation: <code>"both"</code>, <code>"swipe"</code>, or <code>"chevrons"</code>. See §4.2.</td></tr>
+        <tr><td><code>laser_pointer</code></td><td>object</td><td><code>null</code></td><td>Laser pointer for presenter mode. See §4.1.</td></tr>
+        <tr><td><code>video_sound</code></td><td>string</td><td><code>"server"</code></td><td>Where video audio plays in remote mode: <code>"client"</code>, <code>"server"</code>, or <code>"both"</code>. See §4.3.3.</td></tr>
+        <tr><td><code>audio</code></td><td>object</td><td>null</td><td>Global background soundtrack. See §8.</td></tr>
+        <tr><td><code>motion_gesture</code></td><td>object</td><td><code>null</code></td><td><span class="badge badge-draft">Experimental</span> Accelerometer-based slide navigation for iOS/Android. See §4.4.</td></tr>
+        <tr><td><code>image_cache</code></td><td>boolean</td><td><code>true</code></td><td>Cache web images on disk. Set to <code>false</code> for shows whose server images change frequently — images are always fetched fresh and never written to the cache.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>4.1 Laser Pointer</h3>
+
+  <p>When <code>mode</code> is <code>"presenter"</code>, an optional laser pointer can be enabled. It is activated by a long press and follows the user's finger movement. Swipe navigation is suppressed while the laser is active.</p>
+
+<pre><code><span class="kw">"laser_pointer"</span><span class="punc">:</span> <span class="punc">{</span>
+  <span class="kw">"enabled"</span><span class="punc">:</span> <span class="lit">true</span><span class="punc">,</span>         <span class="cmt">// Activate laser pointer mode</span>
+  <span class="kw">"color"</span><span class="punc">:</span>   <span class="str">"#FF0000"</span><span class="punc">,</span>    <span class="cmt">// Dot color (hex). Default: red.</span>
+  <span class="kw">"size"</span><span class="punc">:</span>    <span class="num">20</span>             <span class="cmt">// Dot diameter in px. Default: 20.</span>
+<span class="punc">}</span></code></pre>
+
+  <div class="prop-table">
+    <table>
+      <thead><tr><th>Property</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>enabled</code></td><td>boolean</td><td><code>false</code></td><td>Whether the laser pointer is available in presenter mode</td></tr>
+        <tr><td><code>color</code></td><td>string</td><td><code>"#FF0000"</code></td><td>Dot color (CSS hex)</td></tr>
+        <tr><td><code>size</code></td><td>number</td><td><code>20</code></td><td>Dot diameter in logical pixels</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>4.2 Slide Control</h3>
+
+  <p>When <code>mode</code> is <code>"presenter"</code>, the <code>slide_control</code> property determines which navigation mechanisms are available. In <code>"auto"</code> mode this setting is ignored — the built-in play/pause controls are used instead.</p>
+
+  <table>
+    <thead><tr><th>Value</th><th>Swipe</th><th>Chevrons</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>"both"</code> (default)</td><td>✅</td><td>✅</td><td>Both horizontal swipe and on-screen chevron arrows</td></tr>
+      <tr><td><code>"swipe"</code></td><td>✅</td><td>❌</td><td>Swipe only — clean screen without arrow buttons</td></tr>
+      <tr><td><code>"chevrons"</code></td><td>❌</td><td>✅</td><td>Chevron buttons only — no swipe gesture</td></tr>
+    </tbody>
+  </table>
+
+<pre><code><span class="kw">"slide_control"</span><span class="punc">:</span> <span class="str">"both"</span>     <span class="cmt">// "both" | "swipe" | "chevrons"</span></code></pre>
+
+  <h3>4.3 Remote Presenter Sync</h3>
+
+  <p>A show in <code>"presenter"</code> mode can be used in a <strong>client / server</strong> setup over a local network. The mobile device acts as the <strong>remote</strong> (client) and a desktop or large screen acts as the <strong>display</strong> (server). The remote sends lightweight command messages via WebSocket; the display applies them.</p>
+
+  <p>Two operational models are supported:</p>
+
+  <ul>
+    <li><strong>Classic mode:</strong> Both devices load the same DDL show from their local asset bundles. The remote only sends navigation commands.</li>
+    <li><strong>Server Demo mode:</strong> The display starts without a show and waits for the client to transfer the DDL (and optionally assets or a DDLZ archive). This allows a single mobile device to drive a display that has no pre-loaded content.</li>
+  </ul>
+
+  <p>Five launch modes are available:</p>
+
+  <table>
+    <thead><tr><th>Mode</th><th>Role</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Play</strong></td><td>Standalone</td><td>Normal local playback — no network required</td></tr>
+      <tr><td><strong>Display</strong></td><td>Server</td><td>Starts a WebSocket server on port <code>9130</code>, shows the local IP, waits for a remote client, then plays the show controlled exclusively by the remote. All local user interaction is suppressed (<code>displayOnly</code>).</td></tr>
+      <tr><td><strong>Remote</strong></td><td>Client</td><td>Connects to a display server by IP address. Runs the presenter mode locally and forwards all actions (slide navigation, laser pointer, timer toggle, video toggle) to the display via WebSocket.</td></tr>
+      <tr><td><strong>Remote (Server&nbsp;Demo)</strong></td><td>Client</td><td>Connects to a display, starts a local HTTP asset server, rewrites <code>asset://</code> URIs to <code>http://</code> URLs pointing to the client, and sends the rewritten DDL via <code>show.load</code>. The display fetches assets over HTTP from the client.</td></tr>
+      <tr><td><strong>Remote (Archive)</strong></td><td>Client</td><td>Connects to a display and sends a self-contained DDLZ archive via <code>show.load_archive</code>. The display extracts the archive to local storage, rewrites <code>asset://</code> URIs to <code>file://</code> paths, and plays the show. See §12.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>5.3.1 Display-Only Mode</h4>
+
+  <p>When the player runs as a <strong>display</strong>, the <code>displayOnly</code> flag is set. This suppresses all local user interaction:</p>
+
+  <ul>
+    <li>Swipe navigation — disabled</li>
+    <li>Chevron buttons — hidden</li>
+    <li>Laser pointer (local) — disabled (remote laser is rendered)</li>
+    <li>Video double-tap pause/resume — disabled (remote controls playback)</li>
+    <li>Timer double-tap pause/resume — disabled</li>
+    <li>Timer widget — hidden by default (the timer is a presenter-only tool)</li>
+    <li>Controls overlay — suppressed</li>
+  </ul>
+
+  <p>Only incoming <code>RemoteCommand</code> messages from the connected client can control the show.</p>
+
+  <h4>5.3.2 Command Protocol</h4>
+
+  <p>Commands are single-line JSON messages sent over WebSocket. Each has a <code>type</code> field and optional payload:</p>
+
+  <table>
+    <thead><tr><th>Command</th><th>Payload</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>slide.next</code></td><td>—</td><td>Advance to the next slide</td></tr>
+      <tr><td><code>slide.previous</code></td><td>—</td><td>Go back to the previous slide</td></tr>
+      <tr><td><code>slide.goto</code></td><td><code>{ "index": 3 }</code></td><td>Jump to a specific slide</td></tr>
+      <tr><td><code>show.load</code></td><td><code>{ "ddl": "..." }</code></td><td>Send a complete DDL JSON string to the display (server demo mode)</td></tr>
+      <tr><td><code>show.load_archive</code></td><td><code>{ "archive": "...", "show": "name.ddl.json" }</code></td><td>Send a base64-encoded DDLZ archive and the show file name to play. See §12.</td></tr>
+      <tr><td><code>laser.start</code></td><td><code>{ "x": 0.45, "y": 0.32 }</code></td><td>Begin laser pointer (normalized 0–1 coordinates)</td></tr>
+      <tr><td><code>laser.move</code></td><td><code>{ "x": 0.47, "y": 0.33 }</code></td><td>Update laser position</td></tr>
+      <tr><td><code>laser.end</code></td><td>—</td><td>Deactivate laser pointer</td></tr>
+      <tr><td><code>timer.toggle</code></td><td>—</td><td>Pause or resume the presenter timer</td></tr>
+      <tr><td><code>video.toggle</code></td><td>—</td><td>Pause or resume video playback</td></tr>
+      <tr><td><code>video.restart</code></td><td>—</td><td>Restart video from the beginning</td></tr>
+    </tbody>
+  </table>
+
+  <p>Laser coordinates are normalized to <code>0.0–1.0</code> relative to the slide area, allowing cross-resolution sync between devices of different screen sizes. The laser position is clamped to the screen bounds on both sides.</p>
+
+  <h4>5.3.3 Video Sound Routing</h4>
+
+  <p>In remote client/server mode, the <code>video_sound</code> property controls which device plays the video audio track. This avoids double audio or echo when both devices are in the same room.</p>
+
+<pre><code><span class="kw">"video_sound"</span><span class="punc">:</span> <span class="str">"server"</span>     <span class="cmt">// "client" | "server" | "both"</span></code></pre>
+
+  <table>
+    <thead><tr><th>Value</th><th>Client (Remote)</th><th>Server (Display)</th><th>Use Case</th></tr></thead>
+    <tbody>
+      <tr><td><code>"client"</code> (default)</td><td>Sound</td><td>Muted</td><td>Presenter hears audio on their device; large screen is silent</td></tr>
+      <tr><td><code>"server"</code></td><td>Muted</td><td>Sound</td><td>Audio plays through the display's speakers for the audience</td></tr>
+      <tr><td><code>"both"</code></td><td>Sound</td><td>Sound</td><td>Both devices play audio (e.g. when they are in separate rooms)</td></tr>
+    </tbody>
+  </table>
+
+  <p>In standalone mode (no remote connection), video audio always plays regardless of this setting.</p>
+
+  <h3>4.4 Motion Gesture <span class="badge badge-draft">Experimental</span></h3>
+
+  <p>When <code>mode</code> is <code>"presenter"</code> and the app runs on <strong>iOS or Android</strong>, the optional <code>motion_gesture</code> feature enables slide navigation by physically flicking the device sideways. This allows hands-free slide advancement — for example when the presenter is walking around or holding a microphone.</p>
+
+  <div class="callout orange">
+    <strong>Experimental</strong>
+    This feature uses the device's hardware accelerometer and is labelled experimental. Behaviour may vary across devices and OS versions. The feature is opt-in and disabled by default.
+  </div>
+
+  <p>The service uses the <strong>user accelerometer</strong> (gravity removed), so only motion-caused acceleration is measured. Only strong, deliberate movements that exceed the configured <code>threshold</code> trigger a slide change — normal phone handling, walking, or moderate gestures are ignored.</p>
+
+<pre><code><span class="kw">"motion_gesture"</span><span class="punc">:</span> <span class="punc">{</span>
+  <span class="kw">"enabled"</span><span class="punc">:</span>   <span class="lit">true</span><span class="punc">,</span>    <span class="cmt">// Opt-in (default: false)</span>
+  <span class="kw">"threshold"</span><span class="punc">:</span> <span class="num">15.0</span><span class="punc">,</span>    <span class="cmt">// Minimum acceleration in m/s²</span>
+  <span class="kw">"cooldown"</span><span class="punc">:</span>  <span class="num">600</span><span class="punc">,</span>     <span class="cmt">// Minimum ms between consecutive triggers</span>
+  <span class="kw">"toggle"</span><span class="punc">:</span> <span class="punc">{</span>           <span class="cmt">// Optional on-screen toggle button</span>
+    <span class="kw">"enabled"</span><span class="punc">:</span>  <span class="lit">true</span><span class="punc">,</span>
+    <span class="kw">"position"</span><span class="punc">:</span> <span class="str">"bottom-end"</span><span class="punc">,</span>
+    <span class="kw">"offset_x"</span><span class="punc">:</span> <span class="num">0</span><span class="punc">,</span>
+    <span class="kw">"offset_y"</span><span class="punc">:</span> <span class="num">-50</span>
+  <span class="punc">}</span>
+<span class="punc">}</span></code></pre>
+
+  <div class="prop-table">
+    <table>
+      <thead><tr><th>Property</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>enabled</code></td><td>boolean</td><td><code>false</code></td><td>Whether motion gesture detection is active in presenter mode</td></tr>
+        <tr>
+          <td><code>threshold</code></td><td>number</td><td><code>15.0</code></td>
+          <td>Minimum lateral acceleration in <strong>m/s²</strong> required to trigger a slide change. The user accelerometer (gravity removed) reports values relative to the device's own reference frame. Typical readings for reference:
+            <ul style="margin:6px 0 0 18px;font-size:13px">
+              <li><strong>0–2 m/s²</strong> — phone sitting still or normal handling</li>
+              <li><strong>3–5 m/s²</strong> — walking, casual hand movements</li>
+              <li><strong>6–10 m/s²</strong> — moderate deliberate shake</li>
+              <li><strong>12–18 m/s²</strong> — harsh, forceful flick (recommended range)</li>
+              <li><strong>20+ m/s²</strong> — very violent movement</li>
+            </ul>
+            The default of <code>15.0</code> ensures only a strong, intentional sideways flick of the wrist triggers navigation. Lower values make the gesture more sensitive; higher values require more force.
+          </td>
+        </tr>
+        <tr><td><code>cooldown</code></td><td>number</td><td><code>600</code></td><td>Minimum interval in milliseconds between consecutive triggers. Prevents a single physical movement from firing multiple slide changes. Values below 300 are not recommended.</td></tr>
+        <tr><td><code>toggle</code></td><td>object</td><td><code>null</code></td><td>Optional on-screen toggle button to enable/disable motion detection at runtime. See sub-properties below.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Toggle Button</h4>
+
+  <p>When <code>toggle</code> is provided, an on-screen button is rendered that lets the presenter enable or disable the motion gesture sensor at runtime. The button is positioned like a widget overlay and shows a visual indicator of the current state (active/inactive).</p>
+
+  <div class="prop-table">
+    <table>
+      <thead><tr><th>Property</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>toggle.enabled</code></td><td>boolean</td><td><code>false</code></td><td>Whether to display the toggle button</td></tr>
+        <tr><td><code>toggle.position</code></td><td>string</td><td><code>"bottom-end"</code></td><td>Button position (same values as widget/caption positions: <code>"top"</code>, <code>"bottom"</code>, <code>"center"</code>, <code>"top-start"</code>, <code>"top-end"</code>, <code>"bottom-start"</code>, <code>"bottom-end"</code>)</td></tr>
+        <tr><td><code>toggle.offset_x</code></td><td>number</td><td><code>0</code></td><td>Horizontal offset in logical pixels</td></tr>
+        <tr><td><code>toggle.offset_y</code></td><td>number</td><td><code>0</code></td><td>Vertical offset in logical pixels</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Direction Mapping</h4>
+
+  <p>The gesture interprets the <strong>x-axis</strong> of the user accelerometer (lateral axis when the phone is held upright in portrait orientation):</p>
+
+  <table>
+    <thead><tr><th>Physical Movement</th><th>Accelerometer X</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr><td>Flick device to the <strong>left</strong></td><td>Negative spike (&lt; −threshold)</td><td>Next slide</td></tr>
+      <tr><td>Flick device to the <strong>right</strong></td><td>Positive spike (&gt; +threshold)</td><td>Previous slide</td></tr>
+    </tbody>
+  </table>
+
+  <p>In remote mode, the gesture emits <code>slide.next</code> / <code>slide.previous</code> commands over WebSocket, keeping the display in sync. The gesture is suppressed in <code>displayOnly</code> mode and in <code>"auto"</code> playback mode.</p>
+
+  <hr>
+
+  <!-- SECTION 5: Transitions -->
+  <h2><span class="sec-num">§5</span>Transitions</h2>
+
+  <p>A <strong>Transition Object</strong> describes how one slide exits and the next enters. It can live in <code>defaults.transition</code> or on any individual slide.</p>
+
+<pre><code><span class="punc">{</span>
+  <span class="kw">"type"</span><span class="punc">:</span>      <span class="str">"fade"</span><span class="punc">,</span>       <span class="cmt">// Required. Transition type name.</span>
+  <span class="kw">"duration"</span><span class="punc">:</span> <span class="num">800</span><span class="punc">,</span>         <span class="cmt">// ms. Default: 600.</span>
+  <span class="kw">"curve"</span><span class="punc">:</span>    <span class="str">"easeInOut"</span><span class="punc">,</span>  <span class="cmt">// Optional. Flutter Curves name. Default: "easeInOut".</span>
+  <span class="kw">"direction"</span><span class="punc">:</span> <span class="str">"left"</span>        <span class="cmt">// Optional. For directional transitions.</span>
+<span class="punc">}</span></code></pre>
+
+  <h3>5.1 Transition Types</h3>
+
+  <table>
+    <thead><tr><th>Type</th><th>Description</th><th>Extra Properties</th></tr></thead>
+    <tbody>
+      <tr><td><code>"fade"</code></td><td>Cross-dissolve between slides</td><td>—</td></tr>
+      <tr><td><code>"slide"</code></td><td>New slide pushes old one off-screen</td><td><code>direction</code>: <code>"left"</code> (default), <code>"right"</code>, <code>"up"</code>, <code>"down"</code></td></tr>
+      <tr><td><code>"zoom"</code></td><td>Next slide scales in from center</td><td><code>scale_from</code>: number (default <code>1.2</code>)</td></tr>
+      <tr><td><code>"flip"</code></td><td>3D card flip horizontal or vertical</td><td><code>axis</code>: <code>"horizontal"</code> (default) / <code>"vertical"</code></td></tr>
+      <tr><td><code>"wipe"</code></td><td>Reveal next slide behind a moving edge</td><td><code>direction</code>: same as slide</td></tr>
+      <tr><td><code>"cube"</code></td><td>3D cube rotation</td><td><code>direction</code></td></tr>
+      <tr><td><code>"morph"</code></td><td>Smooth blend with subtle scale-up and vertical shift</td><td>—</td></tr>
+      <tr><td><code>"dissolve"</code></td><td>Pixelated reveal — random blocks appear progressively</td><td><code>block_size</code>: number in px (default <code>20</code>)</td></tr>
+      <tr><td><code>"glitch"</code></td><td>Digital flicker with chromatic aberration and horizontal jitter</td><td><code>intensity</code>: max displacement in px (default <code>20</code>)</td></tr>
+      <tr><td><code>"blur"</code></td><td>Gaussian blur dissolve — new slide emerges from blur</td><td><code>sigma</code>: max blur radius (default <code>20</code>)</td></tr>
+      <tr><td><code>"zoom_reveal"</code></td><td>Pure scale in or out — no fade</td><td><code>mode</code>: <code>"in"</code> (default) / <code>"out"</code>; <code>scale_from</code> for out mode (default <code>1.2</code>)</td></tr>
+      <tr><td><code>"iris"</code></td><td>Shape wipe — expanding shape reveals the new slide</td><td><code>shape</code>: <code>"circle"</code> (default), <code>"diamond"</code>, <code>"rectangle"</code></td></tr>
+      <tr><td><code>"fade_color"</code></td><td>Fade through a solid colour (black, white, or custom)</td><td><code>color</code>: hex string (default <code>"#000000"</code>)</td></tr>
+      <tr><td><code>"none"</code></td><td>Hard cut with no animation</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5.2 Dissolve / Pixelate</h3>
+
+  <p>The <code>"dissolve"</code> transition divides the viewport into a grid of square blocks and reveals them in a pseudo-random order. This creates a distinctive pixelated reveal reminiscent of classic presentation software. The block size is configurable — smaller values produce a finer, smoother dissolve while larger values create a more dramatic mosaic effect.</p>
+
+<pre><code><span class="punc">{</span>
+  <span class="kw">"type"</span><span class="punc">:</span>       <span class="str">"dissolve"</span><span class="punc">,</span>
+  <span class="kw">"duration"</span><span class="punc">:</span>   <span class="num">1200</span><span class="punc">,</span>        <span class="cmt">// ms — longer durations recommended</span>
+  <span class="kw">"block_size"</span><span class="punc">:</span> <span class="num">20</span>           <span class="cmt">// px. Default: 20. Range: 4–100.</span>
+<span class="punc">}</span></code></pre>
+
+  <div class="callout">
+    <strong>Implementation Note</strong>
+    The player generates a deterministic shuffled order of block indices (seeded random) and clips the incoming slide to the subset of blocks that should be visible at the current animation progress. At progress&nbsp;0 no blocks are visible; at progress&nbsp;1 all blocks are shown and the clip path covers the full viewport.
+  </div>
+
+  <h3>5.3 Glitch</h3>
+
+  <p>The <code>"glitch"</code> transition simulates a short digital disturbance during the slide change. The incoming slide appears with horizontal jitter (random displacement of the image along the x-axis) and chromatic aberration (colour channel shifts in the RGB matrix). The distortion intensity follows a bell curve — it is zero at the start and end of the transition and peaks at the midpoint, creating a natural "interference burst" effect.</p>
+
+<pre><code><span class="punc">{</span>
+  <span class="kw">"type"</span><span class="punc">:</span>      <span class="str">"glitch"</span><span class="punc">,</span>
+  <span class="kw">"duration"</span><span class="punc">:</span>  <span class="num">800</span><span class="punc">,</span>          <span class="cmt">// ms. Default: 600.</span>
+  <span class="kw">"intensity"</span><span class="punc">:</span> <span class="num">20</span>            <span class="cmt">// px max horizontal displacement. Default: 20.</span>
+<span class="punc">}</span></code></pre>
+
+  <div class="callout">
+    <strong>Implementation Note</strong>
+    The horizontal offset is computed from a stepped pseudo-random generator (quantised to ~20 discrete steps over the animation) to produce a stuttery, digital feel rather than smooth motion. A <code>ColorFilter.matrix</code> shifts the red, green and blue channels proportionally to the current intensity, creating the chromatic aberration overlay.
+  </div>
+
+  <h3>5.4 Blur / Gaussian Blur</h3>
+
+  <p>The <code>"blur"</code> transition fades in the new slide while simultaneously animating a Gaussian blur from maximum sigma down to zero. This produces the impression of the image "focusing" into view out of a soft, dreamy haze. The <code>sigma</code> parameter controls the initial blur strength — higher values create a more dramatic, out-of-focus start; lower values yield a subtler softening.</p>
+
+<pre><code><span class="punc">{</span>
+  <span class="kw">"type"</span><span class="punc">:</span>   <span class="str">"blur"</span><span class="punc">,</span>
+  <span class="kw">"duration"</span><span class="punc">:</span> <span class="num">1000</span><span class="punc">,</span>         <span class="cmt">// ms. Default: 600.</span>
+  <span class="kw">"sigma"</span><span class="punc">:</span>  <span class="num">20</span>             <span class="cmt">// Max blur radius. Default: 20. Range: 1–60.</span>
+<span class="punc">}</span></code></pre>
+
+  <div class="callout">
+    <strong>Implementation Note</strong>
+    The Flutter runtime wraps the incoming slide in an <code>ImageFiltered</code> widget with <code>ImageFilter.blur(sigmaX, sigmaY)</code>. The sigma is interpolated as <code>maxSigma × (1 − progress)</code>, so the image starts fully blurred and sharpens to zero blur at progress&nbsp;1. An opacity animation runs in parallel for a smooth cross-fade.
+  </div>
+
+  <h3>5.5 Zoom Reveal (Zoom In / Zoom Out)</h3>
+
+  <p>The <code>"zoom_reveal"</code> transition scales the incoming slide from a point to full size (<em>zoom in</em>) or from an oversized view down to normal (<em>zoom out</em>). Unlike the gentler <code>"zoom"</code> transition which cross-fades, <code>"zoom_reveal"</code> performs a pure scale with no opacity change, producing a more dramatic cinematic zoom effect. The viewport is clipped so the scaling slide never overflows.</p>
+
+<pre><code><span class="cmt">// Zoom in — image expands from center point</span>
+<span class="punc">{</span>
+  <span class="kw">"type"</span><span class="punc">:</span> <span class="str">"zoom_reveal"</span><span class="punc">,</span>
+  <span class="kw">"mode"</span><span class="punc">:</span> <span class="str">"in"</span><span class="punc">,</span>             <span class="cmt">// "in" (default) | "out"</span>
+  <span class="kw">"duration"</span><span class="punc">:</span> <span class="num">800</span>
+<span class="punc">}</span>
+
+<span class="cmt">// Zoom out — image shrinks from enlarged to normal</span>
+<span class="punc">{</span>
+  <span class="kw">"type"</span><span class="punc">:</span> <span class="str">"zoom_reveal"</span><span class="punc">,</span>
+  <span class="kw">"mode"</span><span class="punc">:</span> <span class="str">"out"</span><span class="punc">,</span>
+  <span class="kw">"scale_from"</span><span class="punc">:</span> <span class="num">3.0</span><span class="punc">,</span>        <span class="cmt">// Starting scale for out mode. Default: 1.2.</span>
+  <span class="kw">"duration"</span><span class="punc">:</span> <span class="num">800</span>
+<span class="punc">}</span></code></pre>
+
+  <div class="callout">
+    <strong>Implementation Note</strong>
+    The incoming slide is wrapped in <code>ClipRect</code> to prevent overflow and a <code>Transform.scale</code> whose factor is driven by the animation progress. In <em>zoom-in</em> mode the scale runs from 0&nbsp;→&nbsp;1; in <em>zoom-out</em> mode it runs from <code>scale_from</code>&nbsp;→&nbsp;1.
+  </div>
+
+  <h3>5.6 Iris / Shape Wipe</h3>
+
+  <p>The <code>"iris"</code> transition reveals the new slide through an expanding geometric shape — evoking the classic "iris out" closing shot from early cinema and cartoons (famously used at the end of Looney Tunes episodes). The shape starts as an infinitely small point at the centre of the viewport and grows until it covers the entire frame.</p>
+
+<pre><code><span class="punc">{</span>
+  <span class="kw">"type"</span><span class="punc">:</span>     <span class="str">"iris"</span><span class="punc">,</span>
+  <span class="kw">"shape"</span><span class="punc">:</span>    <span class="str">"circle"</span><span class="punc">,</span>      <span class="cmt">// "circle" (default) | "diamond" | "rectangle"</span>
+  <span class="kw">"duration"</span><span class="punc">:</span> <span class="num">1000</span>
+<span class="punc">}</span></code></pre>
+
+  <table>
+    <thead><tr><th>Shape</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>"circle"</code></td><td>Expanding circle from centre — classic iris wipe</td></tr>
+      <tr><td><code>"diamond"</code></td><td>Expanding 45° rotated square (rhombus) from centre</td></tr>
+      <tr><td><code>"rectangle"</code></td><td>Expanding rectangle preserving the viewport aspect ratio</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>Implementation Note</strong>
+    A <code>ClipPath</code> with a custom clipper generates the shape path at each animation frame. The maximum radius equals half the viewport diagonal so the shape fully covers all four corners at progress&nbsp;1.
+  </div>
+
+  <h3>5.7 Fade to Black / Fade to White</h3>
+
+  <p>The <code>"fade_color"</code> transition fades the outgoing slide into a solid colour and then fades the incoming slide in from that same colour. The animation is split into two halves: during the first half (progress 0–0.5) the solid colour overlay rises to full opacity, hiding the old slide; during the second half (0.5–1) the new slide fades in over the solid colour. The <code>color</code> parameter accepts any hex colour value — <code>"#000000"</code> for a classic fade-to-black, <code>"#FFFFFF"</code> for fade-to-white, or any custom colour.</p>
+
+<pre><code><span class="cmt">// Fade through black</span>
+<span class="punc">{</span>
+  <span class="kw">"type"</span><span class="punc">:</span>     <span class="str">"fade_color"</span><span class="punc">,</span>
+  <span class="kw">"color"</span><span class="punc">:</span>    <span class="str">"#000000"</span><span class="punc">,</span>     <span class="cmt">// Default. Any hex colour.</span>
+  <span class="kw">"duration"</span><span class="punc">:</span> <span class="num">1200</span>            <span class="cmt">// Longer durations recommended for this effect.</span>
+<span class="punc">}</span>
+
+<span class="cmt">// Fade through white</span>
+<span class="punc">{</span>
+  <span class="kw">"type"</span><span class="punc">:</span>     <span class="str">"fade_color"</span><span class="punc">,</span>
+  <span class="kw">"color"</span><span class="punc">:</span>    <span class="str">"#FFFFFF"</span><span class="punc">,</span>
+  <span class="kw">"duration"</span><span class="punc">:</span> <span class="num">1200</span>
+<span class="punc">}</span></code></pre>
+
+  <div class="callout">
+    <strong>Implementation Note</strong>
+    The incoming child is wrapped in a <code>Stack</code> containing a <code>ColoredBox</code> and the slide content. The colour overlay opacity is <code>(progress × 2).clamp(0, 1)</code> — reaching full opacity at the midpoint. The slide content opacity is <code>((progress − 0.5) × 2).clamp(0, 1)</code> — invisible until the midpoint, then fading in during the second half.
+  </div>
+
+  <h3>5.8 Curve Values</h3>
+  <p>Any name from Flutter's <code>Curves</code> class is valid: <code>"linear"</code>, <code>"easeIn"</code>, <code>"easeOut"</code>, <code>"easeInOut"</code>, <code>"bounceOut"</code>, <code>"elasticIn"</code>, <code>"decelerate"</code>, etc.</p>
+
+  <hr>
+
+  <!-- SECTION 6: Ken Burns -->
+  <h2><span class="sec-num">§6</span>Ken Burns (Pan &amp; Zoom)</h2>
+
+  <p>The <code>ken_burns</code><sup>1</sup> object defines a slow animated pan and/or zoom applied to a still image while it is displayed. This technique gives static photographs a cinematic, living quality by smoothly moving across the image and gradually zooming in or out. It uses two anchor points — <em>from</em> and <em>to</em> — each specifying a focal point and zoom level as relative viewport fractions. The player animates from one state to the other over the full duration of the slide.</p>
+
+  <div class="callout">
+    <strong>Background</strong>
+    <sup>1</sup> The effect is named after American documentary filmmaker <strong>Ken Burns</strong>, who extensively used slow panning and zooming over still photographs in his acclaimed documentaries such as <em>The Civil War</em> (1990) and <em>Baseball</em> (1994). The technique became so closely associated with his work that Apple named the effect after him when they included it in iMovie (2003). While the name is widely recognised in North America, it may be less familiar to European audiences — technically, it is simply a <strong>pan-and-zoom animation</strong> applied to a still image.
+  </div>
+
+<pre><code><span class="kw">"ken_burns"</span><span class="punc">:</span> <span class="punc">{</span>
+  <span class="kw">"from"</span><span class="punc">:</span> <span class="punc">{</span> <span class="prop">"x"</span><span class="punc">:</span> <span class="num">0.0</span><span class="punc">,</span> <span class="prop">"y"</span><span class="punc">:</span> <span class="num">0.0</span><span class="punc">,</span> <span class="prop">"scale"</span><span class="punc">:</span> <span class="num">1.0</span> <span class="punc">},</span>
+  <span class="kw">"to"</span><span class="punc">:</span>   <span class="punc">{</span> <span class="prop">"x"</span><span class="punc">:</span> <span class="num">0.1</span><span class="punc">,</span> <span class="prop">"y"</span><span class="punc">:</span> <span class="num">0.05</span><span class="punc">,</span> <span class="prop">"scale"</span><span class="punc">:</span> <span class="num">1.3</span> <span class="punc">},</span>
+  <span class="kw">"curve"</span><span class="punc">:</span> <span class="str">"linear"</span>
+<span class="punc">}</span></code></pre>
+
+  <table>
+    <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>from.x</code>, <code>from.y</code></td><td>number [0.0–1.0]</td><td>Starting focal point as fraction of image dimensions</td></tr>
+      <tr><td><code>from.scale</code></td><td>number ≥ 1.0</td><td>Starting zoom level (1.0 = no zoom)</td></tr>
+      <tr><td><code>to.x</code>, <code>to.y</code></td><td>number [0.0–1.0]</td><td>Ending focal point</td></tr>
+      <tr><td><code>to.scale</code></td><td>number ≥ 1.0</td><td>Ending zoom level</td></tr>
+      <tr><td><code>curve</code></td><td>string</td><td>Easing curve name. Default: <code>"linear"</code></td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>Implementation Note</strong>
+    The Flutter runtime should animate the image's transform matrix from the <code>from</code> state to the <code>to</code> state over the full <code>duration</code> of the slide, using a <code>TweenAnimationBuilder</code> or <code>AnimationController</code> with the specified curve.
+  </div>
+
+  <hr>
+
+  <!-- SECTION 7: Captions -->
+  <h2><span class="sec-num">§7</span>Captions &amp; Text Overlays</h2>
+
+<pre><code><span class="kw">"caption"</span><span class="punc">:</span> <span class="punc">{</span>
+  <span class="kw">"title"</span><span class="punc">:</span>     <span class="str">"Eiffel Tower at Dusk"</span><span class="punc">,</span>
+  <span class="kw">"subtitle"</span><span class="punc">:</span>  <span class="str">"Paris, France · 2024"</span><span class="punc">,</span>
+  <span class="kw">"position"</span><span class="punc">:</span>  <span class="str">"bottom"</span><span class="punc">,</span>
+  <span class="kw">"align"</span><span class="punc">:</span>     <span class="str">"start"</span><span class="punc">,</span>
+  <span class="kw">"style"</span><span class="punc">:</span> <span class="punc">{</span>
+    <span class="prop">"title_size"</span><span class="punc">:</span>    <span class="num">20</span><span class="punc">,</span>
+    <span class="prop">"subtitle_size"</span><span class="punc">:</span> <span class="num">14</span><span class="punc">,</span>
+    <span class="prop">"color"</span><span class="punc">:</span>         <span class="str">"#FFFFFF"</span><span class="punc">,</span>
+    <span class="prop">"background"</span><span class="punc">:</span>    <span class="str">"rgba(0,0,0,0.45)"</span><span class="punc">,</span>
+    <span class="prop">"padding"</span><span class="punc">:</span>       <span class="num">12</span>
+  <span class="punc">},</span>
+  <span class="kw">"animate_in"</span><span class="punc">:</span>  <span class="str">"fade"</span><span class="punc">,</span>     <span class="cmt">// "fade" | "slideUp" | "none"</span>
+  <span class="kw">"delay"</span><span class="punc">:</span>       <span class="num">400</span>         <span class="cmt">// ms after slide starts before caption appears</span>
+<span class="punc">}</span></code></pre>
+
+  <table>
+    <thead><tr><th>Position Values</th><th>Align Values</th><th>animate_in Values</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>"top"</code>, <code>"bottom"</code>, <code>"center"</code>, <code>"top-start"</code>, <code>"top-end"</code>, <code>"bottom-start"</code>, <code>"bottom-end"</code></td>
+        <td><code>"start"</code>, <code>"center"</code>, <code>"end"</code></td>
+        <td><code>"fade"</code>, <code>"slideUp"</code>, <code>"slideDown"</code>, <code>"none"</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr>
+
+  <!-- SECTION 8: Audio -->
+  <h2><span class="sec-num">§8</span>Audio</h2>
+
+  <p>Audio can be declared globally in <code>defaults.audio</code> (a continuous background track) or per-slide. Per-slide audio plays alongside the slide and stops on transition.</p>
+
+<pre><code><span class="kw">"audio"</span><span class="punc">:</span> <span class="punc">{</span>
+  <span class="kw">"src"</span><span class="punc">:</span>    <span class="str">"asset://audio/ambient.mp3"</span><span class="punc">,</span>
+  <span class="kw">"volume"</span><span class="punc">:</span> <span class="num">0.8</span><span class="punc">,</span>                       <span class="cmt">// 0.0–1.0</span>
+  <span class="kw">"loop"</span><span class="punc">:</span>   <span class="num">true</span><span class="punc">,</span>                       <span class="cmt">// global track only</span>
+  <span class="kw">"fade_in"</span><span class="punc">:</span>  <span class="num">500</span><span class="punc">,</span>                      <span class="cmt">// ms fade-in at show start</span>
+  <span class="kw">"fade_out"</span><span class="punc">:</span> <span class="num">1000</span>                      <span class="cmt">// ms fade-out at show end</span>
+<span class="punc">}</span></code></pre>
+
+  <hr>
+
+  <!-- SECTION 9: Widget Overlays -->
+  <h2><span class="sec-num">§9</span>Widget Overlays</h2>
+
+  <p>Widget overlays extend the caption concept to arbitrary named Flutter widgets that can be positioned over slides. They can be declared as an array in <code>defaults.widgets</code> (applied to every slide) and/or in individual slide objects. Per-slide widgets are merged with default widgets and rendered in a Flutter <code>Stack</code> ordered by <code>z_index</code>.</p>
+
+<pre><code><span class="kw">"widgets"</span><span class="punc">:</span> <span class="punc">[</span>
+  <span class="punc">{</span>
+    <span class="kw">"name"</span><span class="punc">:</span>       <span class="str">"clock"</span><span class="punc">,</span>          <span class="cmt">// Widget name (mapped to a Flutter widget)</span>
+    <span class="kw">"parameter"</span><span class="punc">:</span> <span class="punc">{</span>                   <span class="cmt">// Widget-specific parameters</span>
+      <span class="prop">"color"</span><span class="punc">:</span>  <span class="str">"#FFFFFF"</span><span class="punc">,</span>
+      <span class="prop">"format"</span><span class="punc">:</span> <span class="str">"hh:mm a"</span>
+    <span class="punc">},</span>
+    <span class="kw">"target"</span><span class="punc">:</span>    <span class="str">"both"</span><span class="punc">,</span>           <span class="cmt">// "client" | "server" | "both" (default)</span>
+    <span class="kw">"position"</span><span class="punc">:</span>  <span class="str">"top-end"</span><span class="punc">,</span>        <span class="cmt">// Same positions as captions (§7)</span>
+    <span class="kw">"offset_x"</span><span class="punc">:</span>  <span class="num">0</span><span class="punc">,</span>                <span class="cmt">// Horizontal pixel offset from position</span>
+    <span class="kw">"offset_y"</span><span class="punc">:</span>  <span class="num">0</span><span class="punc">,</span>                <span class="cmt">// Vertical pixel offset from position</span>
+    <span class="kw">"align"</span><span class="punc">:</span>     <span class="str">"end"</span><span class="punc">,</span>
+    <span class="kw">"animate_in"</span><span class="punc">:</span> <span class="str">"fade"</span><span class="punc">,</span>          <span class="cmt">// Same animations as captions</span>
+    <span class="kw">"z_index"</span><span class="punc">:</span>   <span class="num">1</span>                 <span class="cmt">// Stack ordering (higher = on top)</span>
+  <span class="punc">}</span>
+<span class="punc">]</span></code></pre>
+
+  <div class="schema-block">
+    <table>
+      <thead><tr><th>Property</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>name</code></td><td>string</td><td>✅ Yes</td><td>Widget identifier mapped to a registered Flutter widget</td></tr>
+        <tr><td><code>parameter</code></td><td>object</td><td>No</td><td>Free-form parameters passed to the widget builder</td></tr>
+        <tr><td><code>target</code></td><td>string</td><td>No</td><td><code>"client"</code>, <code>"server"</code>, or <code>"both"</code>. Default: <code>"both"</code></td></tr>
+        <tr><td><code>position</code></td><td>string</td><td>No</td><td>Same values as caption positions (§7). Default: <code>"bottom"</code></td></tr>
+        <tr><td><code>offset_x</code></td><td>number</td><td>No</td><td>Horizontal pixel offset from the resolved position. Positive moves right. Default: <code>0</code></td></tr>
+        <tr><td><code>offset_y</code></td><td>number</td><td>No</td><td>Vertical pixel offset from the resolved position. Positive moves down. Default: <code>0</code></td></tr>
+        <tr><td><code>align</code></td><td>string</td><td>No</td><td><code>"start"</code>, <code>"center"</code>, <code>"end"</code>. Default: <code>"start"</code></td></tr>
+        <tr><td><code>animate_in</code></td><td>string</td><td>No</td><td><code>"fade"</code>, <code>"slideUp"</code>, <code>"slideDown"</code>, <code>"none"</code>. Default: <code>"fade"</code></td></tr>
+        <tr><td><code>delay</code></td><td>number</td><td>No</td><td>Delay in ms before animate-in starts. Default: <code>0</code></td></tr>
+        <tr><td><code>z_index</code></td><td>number</td><td>No</td><td>Stack layer order (higher values render on top). Default: <code>0</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>9.1 Built-in Widgets</h3>
+
+  <table>
+    <thead><tr><th>Name</th><th>Description</th><th>Parameters</th></tr></thead>
+    <tbody>
+      <tr><td><code>"clock"</code></td><td>Digital clock display</td><td><code>color</code> (hex, default <code>"#FFFFFF"</code>), <code>format</code> (time pattern, default <code>"hh:mm a"</code>). Tokens: <code>HH</code> (24h), <code>hh</code> (12h), <code>mm</code>, <code>ss</code>, <code>a</code>/<code>AA</code> (am/pm)</td></tr>
+      <tr><td><code>"timer"</code></td><td>Animated circular countdown/countup timer with mm:ss display</td><td><code>color</code> (hex, default <code>"#FFFFFF"</code>), <code>duration</code> (seconds, default <code>300</code>), <code>direction</code> (<code>"up"</code> or <code>"down"</code>, default <code>"up"</code>)</td></tr>
+      <tr><td><code>"weather"</code></td><td>Live weather display using Open-Meteo API (no API key required)</td><td><code>location</code> (city name, default <code>"Berlin"</code>), <code>color</code> (hex, default <code>"#FFFFFF"</code>), <code>cache_ttl</code> (minutes, default <code>15</code>, clamped to <code>10</code>–<code>60</code>), <code>alt_text</code> (string, optional — displayed instead of the resolved location name)</td></tr>
+      <tr><td><code>"logo"</code></td><td>Image overlay for branding — supports network URLs and asset paths</td><td><code>src</code> (image URL or asset path, required), <code>width</code> (pixels, default <code>120</code>), <code>height</code> (pixels, optional), <code>opacity</code> (0.0–1.0, default <code>1.0</code>), <code>url</code> (string, optional — when set, tapping the logo opens this URL in the system browser; JSON-only, not exposed in the widget editor)</td></tr>
+      <tr><td><code>"sensor"</code></td><td>I2C environment sensor data (BME680/SCD30) via REST API</td><td><code>color</code> (hex, default <code>"#FFFFFF"</code>), <code>temperature</code> (<code>"c"</code> or <code>"f"</code>), <code>pressure</code> (bool, default <code>true</code>), <code>humidity</code> (bool, default <code>true</code>), <code>iaq</code> (bool, default <code>true</code>), <code>refresh</code> (seconds, default <code>60</code>, min <code>15</code>)</td></tr>
+    </tbody>
+  </table>
+
+  <p>Unknown widget names are rendered as an info badge showing the widget name and its parameters, allowing developers to identify unregistered widgets during development.</p>
+
+  <div class="callout green">
+    <strong>Extensibility</strong>
+    The widget system is designed for extensibility. Application developers can register custom widget builders via <code>DdlWidgetRegistry</code> to map DDL widget names to any Flutter widget.
+  </div>
+
+  <hr>
+
+  <!-- SECTION 10: Full Example -->
+  <h2><span class="sec-num">§10</span>Complete Example</h2>
+
+<pre><code><span class="punc">{</span>
+  <span class="kw">"ddl"</span><span class="punc">:</span> <span class="str">"0.1"</span><span class="punc">,</span>
+
+  <span class="kw">"meta"</span><span class="punc">:</span> <span class="punc">{</span>
+    <span class="prop">"name"</span><span class="punc">:</span>        <span class="str">"European Road Trip"</span><span class="punc">,</span>
+    <span class="prop">"description"</span><span class="punc">:</span> <span class="str">"Travel highlights from a European road trip"</span><span class="punc">,</span>
+    <span class="prop">"keywords"</span><span class="punc">:</span>    <span class="str">"travel, europe, paris, alps"</span><span class="punc">,</span>
+    <span class="prop">"author"</span><span class="punc">:</span>      <span class="str">"Jane Doe"</span>
+  <span class="punc">},</span>
+
+  <span class="kw">"defaults"</span><span class="punc">:</span> <span class="punc">{</span>
+    <span class="prop">"duration"</span><span class="punc">:</span>   <span class="num">5000</span><span class="punc">,</span>
+    <span class="prop">"fit"</span><span class="punc">:</span>        <span class="str">"cover"</span><span class="punc">,</span>
+    <span class="prop">"loop"</span><span class="punc">:</span>       <span class="num">true</span><span class="punc">,</span>
+    <span class="prop">"autoplay"</span><span class="punc">:</span>   <span class="num">true</span><span class="punc">,</span>
+    <span class="prop">"preload"</span><span class="punc">:</span>    <span class="str">"adjacent"</span><span class="punc">,</span>
+    <span class="prop">"background_color"</span><span class="punc">:</span> <span class="str">"#111111"</span><span class="punc">,</span>
+    <span class="prop">"transition"</span><span class="punc">:</span> <span class="punc">{</span>
+      <span class="prop">"type"</span><span class="punc">:</span>     <span class="str">"fade"</span><span class="punc">,</span>
+      <span class="prop">"duration"</span><span class="punc">:</span> <span class="num">700</span><span class="punc">,</span>
+      <span class="prop">"curve"</span><span class="punc">:</span>    <span class="str">"easeInOut"</span>
+    <span class="punc">},</span>
+    <span class="prop">"audio"</span><span class="punc">:</span> <span class="punc">{</span>
+      <span class="prop">"src"</span><span class="punc">:</span>      <span class="str">"asset://audio/soundtrack.mp3"</span><span class="punc">,</span>
+      <span class="prop">"volume"</span><span class="punc">:</span>   <span class="num">0.7</span><span class="punc">,</span>
+      <span class="prop">"loop"</span><span class="punc">:</span>     <span class="num">true</span><span class="punc">,</span>
+      <span class="prop">"fade_in"</span><span class="punc">:</span>  <span class="num">1000</span><span class="punc">,</span>
+      <span class="prop">"fade_out"</span><span class="punc">:</span> <span class="num">1500</span>
+    <span class="punc">}</span>
+  <span class="punc">},</span>
+
+  <span class="kw">"show"</span><span class="punc">:</span> <span class="punc">[</span>
+    <span class="punc">{</span>
+      <span class="cmt">// Slide 1 — network image with Ken Burns + caption</span>
+      <span class="prop">"id"</span><span class="punc">:</span>       <span class="str">"slide_paris"</span><span class="punc">,</span>
+      <span class="prop">"src"</span><span class="punc">:</span>      <span class="str">"https://cdn.example.com/paris_dusk.webp"</span><span class="punc">,</span>
+      <span class="prop">"duration"</span><span class="punc">:</span> <span class="num">7000</span><span class="punc">,</span>
+      <span class="prop">"ken_burns"</span><span class="punc">:</span> <span class="punc">{</span>
+        <span class="prop">"from"</span><span class="punc">:</span> <span class="punc">{</span> <span class="prop">"x"</span><span class="punc">:</span> <span class="num">0.5</span><span class="punc">,</span> <span class="prop">"y"</span><span class="punc">:</span> <span class="num">0.5</span><span class="punc">,</span> <span class="prop">"scale"</span><span class="punc">:</span> <span class="num">1.0</span> <span class="punc">},</span>
+        <span class="prop">"to"</span><span class="punc">:</span>   <span class="punc">{</span> <span class="prop">"x"</span><span class="punc">:</span> <span class="num">0.6</span><span class="punc">,</span> <span class="prop">"y"</span><span class="punc">:</span> <span class="num">0.4</span><span class="punc">,</span> <span class="prop">"scale"</span><span class="punc">:</span> <span class="num">1.25</span> <span class="punc">}</span>
+      <span class="punc">},</span>
+      <span class="prop">"caption"</span><span class="punc">:</span> <span class="punc">{</span>
+        <span class="prop">"title"</span><span class="punc">:</span>    <span class="str">"Paris at Dusk"</span><span class="punc">,</span>
+        <span class="prop">"subtitle"</span><span class="punc">:</span> <span class="str">"Summer 2024"</span><span class="punc">,</span>
+        <span class="prop">"position"</span><span class="punc">:</span> <span class="str">"bottom-start"</span><span class="punc">,</span>
+        <span class="prop">"animate_in"</span><span class="punc">:</span> <span class="str">"slideUp"</span><span class="punc">,</span>
+        <span class="prop">"delay"</span><span class="punc">:</span> <span class="num">600</span>
+      <span class="punc">}</span>
+    <span class="punc">},</span>
+    <span class="punc">{</span>
+      <span class="cmt">// Slide 2 — local asset, custom slide transition overriding the default</span>
+      <span class="prop">"src"</span><span class="punc">:</span>       <span class="str">"asset://images/alps_winter.jpg"</span><span class="punc">,</span>
+      <span class="prop">"transition"</span><span class="punc">:</span> <span class="punc">{</span>
+        <span class="prop">"type"</span><span class="punc">:</span>      <span class="str">"slide"</span><span class="punc">,</span>
+        <span class="prop">"direction"</span><span class="punc">:</span> <span class="str">"left"</span><span class="punc">,</span>
+        <span class="prop">"duration"</span><span class="punc">:</span>  <span class="num">500</span>
+      <span class="punc">}</span>
+    <span class="punc">},</span>
+    <span class="punc">{</span>
+      <span class="cmt">// Slide 3 — hard cut, no transition, short duration</span>
+      <span class="prop">"src"</span><span class="punc">:</span>       <span class="str">"asset://images/logo_splash.png"</span><span class="punc">,</span>
+      <span class="prop">"duration"</span><span class="punc">:</span>  <span class="num">2000</span><span class="punc">,</span>
+      <span class="prop">"fit"</span><span class="punc">:</span>        <span class="str">"contain"</span><span class="punc">,</span>
+      <span class="prop">"transition"</span><span class="punc">:</span> <span class="punc">{</span> <span class="prop">"type"</span><span class="punc">:</span> <span class="str">"none"</span> <span class="punc">}</span>
+    <span class="punc">},</span>
+    <span class="punc">{</span>
+      <span class="cmt">// Slide 4 — video clip, duration from video, no laser pointer</span>
+      <span class="prop">"type"</span><span class="punc">:</span>      <span class="str">"video"</span><span class="punc">,</span>
+      <span class="prop">"src"</span><span class="punc">:</span>       <span class="str">"asset://video/drone_flyover.mp4"</span><span class="punc">,</span>
+      <span class="prop">"caption"</span><span class="punc">:</span> <span class="punc">{</span>
+        <span class="prop">"title"</span><span class="punc">:</span>    <span class="str">"Drone Flyover"</span><span class="punc">,</span>
+        <span class="prop">"subtitle"</span><span class="punc">:</span> <span class="str">"Lake Geneva"</span><span class="punc">,</span>
+        <span class="prop">"position"</span><span class="punc">:</span> <span class="str">"bottom-start"</span><span class="punc">,</span>
+        <span class="prop">"animate_in"</span><span class="punc">:</span> <span class="str">"fade"</span>
+      <span class="punc">}</span>
+    <span class="punc">}</span>
+  <span class="punc">]</span>
+<span class="punc">}</span></code></pre>
+
+  <hr>
+
+  <!-- SECTION 11: JSON Schema -->
+  <h2><span class="sec-num">§11</span>JSON Schema (Excerpt)</h2>
+
+<pre><code><span class="punc">{</span>
+  <span class="kw">"$schema"</span><span class="punc">:</span> <span class="str">"http://json-schema.org/draft-07/schema#"</span><span class="punc">,</span>
+  <span class="kw">"$id"</span><span class="punc">:</span>     <span class="str">"https://ddl-spec.dev/schema/0.1/ddl.schema.json"</span><span class="punc">,</span>
+  <span class="kw">"title"</span><span class="punc">:</span>   <span class="str">"DdlShow"</span><span class="punc">,</span>
+  <span class="kw">"type"</span><span class="punc">:</span>    <span class="str">"object"</span><span class="punc">,</span>
+  <span class="kw">"required"</span><span class="punc">:</span> <span class="punc">[</span><span class="str">"ddl"</span><span class="punc">,</span> <span class="str">"show"</span><span class="punc">],</span>
+  <span class="kw">"properties"</span><span class="punc">:</span> <span class="punc">{</span>
+    <span class="prop">"ddl"</span><span class="punc">:</span>  <span class="punc">{</span> <span class="prop">"type"</span><span class="punc">:</span> <span class="str">"string"</span><span class="punc">,</span> <span class="prop">"pattern"</span><span class="punc">:</span> <span class="str">"^\\d+\\.\\d+$"</span> <span class="punc">},</span>
+    <span class="prop">"meta"</span><span class="punc">:</span> <span class="punc">{</span>
+      <span class="prop">"type"</span><span class="punc">:</span> <span class="str">"object"</span><span class="punc">,</span>
+      <span class="prop">"properties"</span><span class="punc">:</span> <span class="punc">{</span>
+        <span class="prop">"description"</span><span class="punc">:</span> <span class="punc">{</span> <span class="prop">"type"</span><span class="punc">:</span> <span class="str">"string"</span> <span class="punc">},</span>
+        <span class="prop">"keywords"</span><span class="punc">:</span>    <span class="punc">{</span> <span class="prop">"type"</span><span class="punc">:</span> <span class="str">"string"</span> <span class="punc">},</span>
+        <span class="prop">"author"</span><span class="punc">:</span>      <span class="punc">{</span> <span class="prop">"type"</span><span class="punc">:</span> <span class="str">"string"</span> <span class="punc">}</span>
+      <span class="punc">},</span>
+      <span class="prop">"additionalProperties"</span><span class="punc">:</span> <span class="punc">{</span> <span class="prop">"type"</span><span class="punc">:</span> <span class="str">"string"</span> <span class="punc">}</span>
+    <span class="punc">},</span>
+    <span class="prop">"show"</span><span class="punc">:</span> <span class="punc">{</span>
+      <span class="prop">"type"</span><span class="punc">:</span> <span class="str">"array"</span><span class="punc">,</span>
+      <span class="prop">"minItems"</span><span class="punc">:</span> <span class="num">1</span><span class="punc">,</span>
+      <span class="prop">"items"</span><span class="punc">:</span> <span class="punc">{</span>
+        <span class="prop">"type"</span><span class="punc">:</span> <span class="str">"object"</span><span class="punc">,</span>
+        <span class="prop">"required"</span><span class="punc">:</span> <span class="punc">[</span><span class="str">"src"</span><span class="punc">],</span>
+        <span class="prop">"properties"</span><span class="punc">:</span> <span class="punc">{</span>
+          <span class="prop">"src"</span><span class="punc">:</span>        <span class="punc">{</span> <span class="prop">"type"</span><span class="punc">:</span> <span class="str">"string"</span><span class="punc">,</span> <span class="prop">"format"</span><span class="punc">:</span> <span class="str">"uri-reference"</span> <span class="punc">},</span>
+          <span class="prop">"type"</span><span class="punc">:</span>       <span class="punc">{</span> <span class="prop">"type"</span><span class="punc">:</span> <span class="str">"string"</span><span class="punc">,</span> <span class="prop">"enum"</span><span class="punc">:</span> <span class="punc">[</span><span class="str">"image"</span><span class="punc">,</span> <span class="str">"video"</span><span class="punc">,</span> <span class="str">"lottie"</span><span class="punc">,</span> <span class="str">"web"</span><span class="punc">,</span> <span class="str">"pdf"</span><span class="punc">],</span> <span class="prop">"default"</span><span class="punc">:</span> <span class="str">"image"</span> <span class="punc">},</span>
+          <span class="prop">"duration"</span><span class="punc">:</span>   <span class="punc">{</span> <span class="prop">"type"</span><span class="punc">:</span> <span class="str">"number"</span><span class="punc">,</span> <span class="prop">"minimum"</span><span class="punc">:</span> <span class="num">100</span> <span class="punc">},</span>
+          <span class="prop">"fit"</span><span class="punc">:</span>        <span class="punc">{</span> <span class="prop">"type"</span><span class="punc">:</span> <span class="str">"string"</span><span class="punc">,</span>
+                          <span class="prop">"enum"</span><span class="punc">:</span> <span class="punc">[</span><span class="str">"cover"</span><span class="punc">,</span><span class="str">"contain"</span><span class="punc">,</span><span class="str">"fill"</span><span class="punc">,</span><span class="str">"fitWidth"</span><span class="punc">,</span><span class="str">"fitHeight"</span><span class="punc">]</span> <span class="punc">}</span>
+        <span class="punc">}</span>
+      <span class="punc">}</span>
+    <span class="punc">}</span>
+  <span class="punc">}</span>
+<span class="punc">}</span></code></pre>
+
+  <hr>
+
+  <!-- SECTION 12: DDLZ Archive Format -->
+  <h2><span class="sec-num">§12</span>DDLZ Archive Format</h2>
+
+  <p>A <strong>DDLZ</strong> file is a standard ZIP archive (file extension <code>.ddlz</code>) that bundles one or more DDL show files together with all referenced assets (images, audio, Lottie animations, and PDF documents). This makes shows fully self-contained and portable — they can be transferred between devices without requiring a shared asset server or pre-installed content. Note that <code>"web"</code> type slides are not bundled as they require live internet access.</p>
+
+  <h3>12.1 Archive Structure</h3>
+
+  <p>The archive mirrors the asset directory layout used in DDL source URIs. All <code>asset://</code> references in the DDL files map directly to paths inside the archive:</p>
+
+<pre><code>my_show.ddlz (ZIP)
+├── diashows/
+│   ├── nature.ddl.json          <span class="cmt">// DDL show files</span>
+│   ├── widget_demo.ddl.json
+│   └── transition.ddl.json
+├── images/
+│   ├── paris.jpg                <span class="cmt">// Referenced via asset://images/paris.jpg</span>
+│   ├── alps.jpg
+│   └── fireworks.json           <span class="cmt">// Lottie animations live alongside images</span>
+├── video/
+│   └── intro.mp4               <span class="cmt">// Referenced via asset://video/intro.mp4</span>
+├── pdf/
+│   └── sample.pdf               <span class="cmt">// Referenced via asset://pdf/sample.pdf</span>
+└── audio/
+    └── ambient.mp3              <span class="cmt">// Referenced via asset://audio/ambient.mp3</span></code></pre>
+
+  <div class="callout">
+    <strong>Convention</strong>
+    The directory names (<code>diashows/</code>, <code>images/</code>, <code>video/</code>, <code>pdf/</code>, <code>audio/</code>) mirror the Flutter asset directory structure. A DDL file referencing <code>asset://images/dog.webp</code> expects the file at <code>images/dog.webp</code> inside the archive.
+  </div>
+
+  <h3>12.2 Transfer Protocol</h3>
+
+  <p>DDLZ archives are transferred from client to display via the <code>show.load_archive</code> WebSocket command (§4.3.2). The archive bytes are <strong>base64-encoded</strong> and sent as a JSON string alongside the name of the show file to play:</p>
+
+<pre><code><span class="punc">{</span>
+  <span class="kw">"type"</span><span class="punc">:</span>    <span class="str">"show.load_archive"</span><span class="punc">,</span>
+  <span class="kw">"archive"</span><span class="punc">:</span> <span class="str">"UEsDBBQAAAAIAG..."</span><span class="punc">,</span>   <span class="cmt">// Base64-encoded ZIP bytes</span>
+  <span class="kw">"show"</span><span class="punc">:</span>    <span class="str">"widget_demo.ddl.json"</span>  <span class="cmt">// Show file name inside diashows/</span>
+<span class="punc">}</span></code></pre>
+
+  <h3>12.3 Extraction &amp; Path Rewriting</h3>
+
+  <p>When the display server receives a DDLZ archive, it performs the following steps:</p>
+
+  <ol>
+    <li><strong>Extract</strong> — the ZIP archive is decoded and extracted to a temporary directory on the local filesystem (<code>Directory.systemTemp/diashow_ddlz/</code>).</li>
+    <li><strong>Locate show</strong> — the requested show file is read from <code>diashows/{showName}</code> inside the extracted directory.</li>
+    <li><strong>Rewrite URIs</strong> — all <code>asset://</code> references in the DDL JSON are replaced with <code>file:///</code> paths pointing to the extracted files. For example:<br>
+      <code>asset://images/dog.webp</code> → <code>file:///tmp/diashow_ddlz/images/dog.webp</code></li>
+    <li><strong>Parse &amp; play</strong> — the rewritten DDL JSON is parsed and the show begins playback.</li>
+  </ol>
+
+  <div class="callout green">
+    <strong>Advantage over Server Demo</strong>
+    Unlike the HTTP asset server approach (where the client must remain connected and serving assets throughout playback), the DDLZ archive transfers all data upfront. Once extracted, the display plays from local files and the client connection is only needed for navigation commands. This is more reliable over unstable WiFi connections and works even if the client's battery dies mid-show.
+  </div>
+
+  <h3>12.4 Implementation Notes</h3>
+
+  <table>
+    <thead><tr><th>Aspect</th><th>Detail</th></tr></thead>
+    <tbody>
+      <tr><td>ZIP library</td><td><code>archive</code> package (v4.x) for Dart — cross-platform ZIP decoding</td></tr>
+      <tr><td>Temp storage</td><td><code>Directory.systemTemp</code> from <code>dart:io</code> — no <code>path_provider</code> dependency required</td></tr>
+      <tr><td>Cleanup</td><td><code>DdlzHandler.cleanup()</code> deletes the extraction directory</td></tr>
+      <tr><td>macOS metadata</td><td><code>__MACOSX/</code> entries and <code>.DS_Store</code> files are skipped during extraction</td></tr>
+      <tr><td>Multi-show archives</td><td>A single DDLZ can contain multiple show files in <code>diashows/</code>; the <code>show</code> parameter in the command selects which one to play</td></tr>
+      <tr><td>Source types after extraction</td><td>Images resolve via <code>FileImage</code>, Lottie via <code>Lottie.file()</code>, network images via <code>CachedNetworkImage</code> (unchanged)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>12.5 Creating a DDLZ</h3>
+
+  <p>A DDLZ archive can be created with any standard ZIP tool. The only requirement is that the directory structure matches the <code>asset://</code> URI paths used in the DDL show files:</p>
+
+<pre><code><span class="cmt"># From the asset directory root:</span>
+zip -r my_show.ddlz diashows/ images/ video/ audio/
+
+<span class="cmt"># Rename extension (optional — .zip works too):</span>
+mv my_show.zip my_show.ddlz</code></pre>
+
+  <div class="callout orange">
+    <strong>Size Considerations</strong>
+    DDLZ archives are base64-encoded for WebSocket transfer, which increases the payload size by ~33%. For shows with many large images, the HTTP asset server approach (Server Demo mode) may be more efficient as it streams assets on demand. DDLZ is best suited for small to medium shows (under ~50 MB uncompressed).
+  </div>
+
+  <hr>
+
+  <!-- SECTION 13: Roadmap -->
+  <h2><span class="sec-num">§13</span>Version Roadmap</h2>
+
+  <table>
+    <thead><tr><th>Version</th><th>Planned Features</th></tr></thead>
+    <tbody>
+      <tr><td><strong>0.1</strong> (this doc)</td><td>Core: slides, timing, transitions, Ken Burns, captions, audio, video clips, widget overlays, remote presenter sync, DDLZ archives</td></tr>
+      <tr><td><strong>0.2</strong></td><td><code>playlist</code> (multiple shows in sequence); video controls (pause, seek)</td></tr>
+      <tr><td><strong>0.3</strong></td><td>Interactive hotspots; tap-to-pause; gesture overrides</td></tr>
+      <tr><td><strong>1.0</strong></td><td>Stable schema; JSON Schema published; official Dart package on pub.dev</td></tr>
+    </tbody>
+  </table>
+
+  <hr>
+
+  <div class="callout green">
+    <strong>Summary</strong>
+    DDL is a minimal, forward-compatible, human-readable declarative language for Flutter image diashows. It has no direct competitor in the Flutter/mobile space. Its JSON encoding, inheritance model, and clear separation of concerns (sequencing, timing, transitions, animations, overlays, audio) make it suitable for both developer-authored show files and CMS-generated payloads.
+  </div>
+
+  <p style="margin-top:40px; font-size:13px; color:var(--muted); text-align:center;">
+    DDL Specification v1.0 · April 2026 · Status: <span class="badge badge-released">Released</span>
+  </p>
+
+</div>
+</body>
+</html>
