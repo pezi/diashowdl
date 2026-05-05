@@ -1,5 +1,7 @@
 # DiashowDL — public docs and integration clients
 
+![DiashowDL](images/diashowdl.webp "DiashowDL Apps")
+
 Public companion repo for **DiashowDL**, a cross-platform Flutter slideshow
 player that drives shows written in the **Diashow Description Language
 (DDL v1.0)**. This repo does not contain the app itself — only the
