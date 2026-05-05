@@ -1,0 +1,100 @@
+{
+  "ddl": "0.1",
+  "meta": {
+    "description": "Widget overlay demo with clock, timer, weather and logo",
+    "keywords": "demo, widgets, presenter",
+    "author": "Diashow Team"
+  },
+  "defaults": {
+    "duration": 5000,
+    "fit": "cover",
+    "loop": true,
+    "mode": "presenter",
+    "slide_control": "both",
+    "laser_pointer": { "enabled": true, "color": "#FF3333", "size": 24 },
+    "motion_gesture": {
+      "enabled": true, "threshold": 15.0, "cooldown": 600,
+      "toggle": { "enabled": true, "position": "bottom-end", "offset_x": 0, "offset_y": -50 }
+    },
+    "video_sound": "server",
+    "background_color": "#0A0A1A",
+    "transition": { "type": "fade", "duration": 800 },
+    "widgets": [
+      {
+        "name": "clock",
+        "parameter": { "color": "#FFFFFF", "format": "HH:mm" },
+        "position": "top-end",
+        "animate_in": "none",
+        "offset_x" : -50
+      },
+      {
+        "name": "timer",
+        "parameter": { "duration": 600, "direction": "down", "color": "#58A6FF" },
+        "position": "bottom-start",
+        "animate_in": "none",
+        "z_index": 1
+      },
+      {
+        "name": "weather",
+        "parameter": { "location": "Vienna", "color": "#FFFFFF", "alt_text": "Wien, AT" },
+        "position": "top-start",
+        "animate_in": "none",
+        "z_index": 1
+      }
+    ]
+  },
+  "show": [
+    {
+      "id": "city_night",
+      "src": "https://flutterdev.at/static/photo-1477959858617-67f85cf4f1df.webp",
+      "caption": { "title": "City Lights", "subtitle": "New York · Night", "position": "bottom-end", "animate_in": "slideUp" }
+    },
+    {
+      "id": "sunset_lake",
+      "src": "https://flutterdev.at/static/photo-1501785888041-af3ef285b470.webp",
+      "caption": { "title": "Golden Hour", "subtitle": "Lake · Sunset", "position": "bottom-end", "animate_in": "slideUp" }
+    },
+    {
+      "id": "mountain_peak",
+      "src": "https://flutterdev.at/static/photo-1506905925346-21bda4d32df4.webp",
+      "caption": { "title": "Summit View", "subtitle": "Swiss Alps", "position": "bottom-end", "animate_in": "slideUp" }
+    },
+    {
+      "id": "asset_image",
+      "src": "asset://images/dog.webp",
+      "fit": "contain",
+      "transition": { "type": "zoom", "duration": 800 },
+      "caption": { "title": "Mischa & Franek", "subtitle": "src: asset://images/dog.webp", "position": "bottom-end", "animate_in": "slideUp" }
+    },
+    {
+      "id": "video_clip",
+      "type": "video",
+      "video_sound": "server",
+      "src": "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_10MB.mp4",
+      "caption": { "title": "Big Buck Bunny", "subtitle": "Video Clip Sample · 10s", "position": "bottom-end", "animate_in": "fade" }
+    },
+    {
+      "id": "lottie_asset",
+      "type": "lottie",
+      "src": "asset://images/fireworks.json",
+      "duration": 5000,
+      "fit": "contain",
+      "transition": { "type": "fade", "duration": 600 },
+      "caption": { "title": "Lottie (Asset)", "subtitle": "type: lottie · asset source", "position": "bottom-end" }
+    },
+    {
+      "id": "web_demo",
+      "type": "web",
+      "src": "https://web.chemdoodle.com/",
+      "duration": 10000,
+      "caption": { "title": "Web View", "subtitle": "type: web · ChemDoodle", "position": "bottom-end" }
+    },
+    {
+      "id": "pdf_demo",
+      "type": "pdf",
+      "src": "https://pdfobject.com/pdf/sample.pdf",
+      "duration": 15000,
+      "caption": { "title": "PDF Viewer", "subtitle": "type: pdf · Sample Document", "position": "bottom-end" }
+    }
+  ]
+}
