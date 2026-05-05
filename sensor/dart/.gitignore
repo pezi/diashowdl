@@ -1,0 +1,9 @@
+# Configuration with secrets
+config.json
+
+# SSL certificates
+*.pem
+
+# Dart
+.dart_tool/
+pubspec.lock

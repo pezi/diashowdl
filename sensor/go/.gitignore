@@ -1,0 +1,8 @@
+# Configuration with secrets
+config.json
+
+# SSL certificates
+*.pem
+
+# Go
+diashow-sensor-node

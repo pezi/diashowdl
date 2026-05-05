@@ -1,0 +1,8 @@
+# Configuration with secrets
+config.json
+
+# SSL certificates
+*.pem
+
+# Rust
+target/

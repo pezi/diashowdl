@@ -1,0 +1,9 @@
+name: diashow_sensor_node
+description: DiashowDL Sensor Node — Dart CLI for Linux SBCs.
+version: 1.0.0
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  dart_periphery: ^0.9.20

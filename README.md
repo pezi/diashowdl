@@ -18,6 +18,7 @@ and reference client implementations in seven languages.
 | [`api.md`](api.md) | REST API documentation |
 | [`sensor.md`](sensor.md) | Sensor interface specification |
 | [`api/`](api/) | Reference REST API clients (Python, Dart, Go, Node.js, C#, Java, ESP32) |
+| [`sensor/`](sensor/) | Reference sensor-node implementations (Python, Dart, Go, Rust, ESP32) |
 
 ## REST API
 
@@ -87,8 +88,16 @@ can implement it:
   with an `X-Api-Key` header.
 
 See [`sensor.md`](sensor.md) for the full specification (discovery payload,
-data schema, error handling). Reference sensor-node implementations are not
-included in this repo.
+data schema, error handling). Reference sensor-node implementations live in
+[`sensor/`](sensor/):
+
+| Language | Path | Notes |
+|----------|------|-------|
+| [Python](sensor/python/) | `sensor/python/sensor_node.py` | Linux, reads I²C via `smbus2` |
+| [Dart](sensor/dart/) | `sensor/dart/bin/` | CLI, `dart compile exe` for a static binary |
+| [Go](sensor/go/) | `sensor/go/main.go` | Linux build reads real I²C; other platforms get a stub |
+| [Rust](sensor/rust/) | `sensor/rust/src/` | `cargo build --release` |
+| [ESP32](sensor/esp32/) | `sensor/esp32/esp32.ino` | Arduino sketch, on-device HTTPS with self-signed cert |
 
 ## About the DiashowDL app
 
