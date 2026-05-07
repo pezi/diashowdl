@@ -150,12 +150,7 @@ def read_key():
         ch = msvcrt.getch()
         if ch in (b"\x00", b"\xe0"):
             ch2 = msvcrt.getch()
-<<<<<<< HEAD
             return {b"K": "left", b"M": "right", b"H": "up", b"P": "down"}.get(
                 ch2, ""
             )
-=======
-            return {b"K": "left", b"M": "right",
-                    b"H": "up",   b"P": "down"}.get(ch2, "")
->>>>>>> 7f4c5eb (API Scripts for diffrent Lang.(Java Go))
         return ch.decode("utf-8", errors="ignore")
