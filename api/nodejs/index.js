@@ -112,7 +112,7 @@ async function main() {
     process.exit(1);
   }
 
-  console.log('\nControls:  \u2190 (left) previous  |  \u2192 (right) next  |  c clear cache  |  q quit\n');
+  console.log('\nControls:  \u2190 (left) previous  |  \u2192 (right) next  |  q quit\n');
 
   // Setup keypress listener
   readline.emitKeypressEvents(process.stdin);
@@ -128,9 +128,6 @@ async function main() {
       } else if (keyPress.name === 'right') {
         await api(host, key, 'POST', '/api/show/next');
         process.stdout.write('\u2192 next\n');
-      } else if (keyPress.name === 'c' && !keyPress.ctrl) {
-        await api(host, key, 'POST', '/api/cache/clear');
-        process.stdout.write('cache cleared\n');
       } else if (keyPress.name === 'q' || (keyPress.ctrl && keyPress.name === 'c')) {
         console.log('Stopping show...');
         await api(host, key, 'POST', '/api/show/stop');

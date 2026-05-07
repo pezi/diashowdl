@@ -114,7 +114,7 @@ public class ApiDemo {
             System.out.println("Playback started: " + actualName);
 
             System.out.println();
-            System.out.println("Controls:  <- (previous) | -> (next) | p (previous) | n (next) | c (clear cache) | q (quit)");
+            System.out.println("Controls:  <- (previous) | -> (next) | p (previous) | n (next) | q (quit)");
             System.out.println();
 
             // Read keyboard input character by character
@@ -129,9 +129,6 @@ public class ApiDemo {
                     } else if (ch == 'p' || ch == 'P') {
                         post(host, apiKey, "/api/show/previous", new JsonObject());
                         System.out.println("<- previous");
-                    } else if (ch == 'c' || ch == 'C') {
-                        post(host, apiKey, "/api/cache/clear", new JsonObject());
-                        System.out.println("cache cleared");
                     } else if (ch == 'q' || ch == 'Q' || ch == 3) { // 3 = Ctrl+C
                         System.out.println("Stopping show...");
                         post(host, apiKey, "/api/show/stop", new JsonObject());

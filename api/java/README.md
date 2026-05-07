@@ -33,7 +33,6 @@ java -jar target/api-demo-1.0-SNAPSHOT.jar 192.168.1.100 ../../diashows/amphibia
 
 -   `Arrow Left` / `p`: Previous slide
 -   `Arrow Right` / `n`: Next slide
--   `c`: Clear cache
 -   `q`: Quit and stop the presentation
 
 ## Notes
