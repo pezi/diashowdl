@@ -58,7 +58,9 @@ python <demo_file.py> <display-ip> <show-file> <api-key>
 
 ### Example
 ```bash
-python api_demo.py 192.168.1.100 widget_demo.ddl.json my-secret-key
+python api_demo.py 192.168.1.100 ../../diashows/widget_demo.ddl.json my-secret-key
+
+python api_demo.py 192.168.1.100 ../../diashows/amphibia.ddlz my-secret-key
 ```
 
 ## Shared Logic
