@@ -107,7 +107,7 @@ namespace DiashowApiDemo
                 return;
             }
 
-            Console.WriteLine("\nControls:  <- previous  |  -> next  |  c clear cache  |  q quit\n");
+            Console.WriteLine("\nControls:  <- previous  |  -> next  |  q quit\n");
 
             while (true)
             {
@@ -121,11 +121,6 @@ namespace DiashowApiDemo
                 {
                     await Api(host, key, "POST", "/api/show/next");
                     Console.WriteLine("-> next");
-                }
-                else if (keyInfo.Key == ConsoleKey.C)
-                {
-                    await Api(host, key, "POST", "/api/cache/clear");
-                    Console.WriteLine("cache cleared");
                 }
                 else if (keyInfo.Key == ConsoleKey.Q)
                 {
