@@ -9,7 +9,7 @@ over the REST API on port `9134`.
 | Sketch | Input | Mapping |
 |--------|-------|---------|
 | [`buttons/`](buttons/) | Two GPIO push-buttons | Previous / Next |
-| [`grove_gesture/`](grove_gesture/) | Seeed Grove Gesture v1.0 (PAJ7620U2) | Swipe Left / Right / Up |
+| [`grove_gesture/`](grove_gesture/) | Seeed Grove Gesture v1.0 (PAJ7620U2) | Swipe Left / Right |
 
 See each sub-directory's `README.md` for wiring details and gesture
 mappings.

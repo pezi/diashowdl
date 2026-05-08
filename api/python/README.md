@@ -53,10 +53,11 @@ Choose the requirements file matching the demo you want to run:
 All demos follow the same command-line argument structure:
 
 ```bash
-python <demo_file.py> <display-ip> <show-file> <api-key>
+python <demo_file.py> <display-ip> <filename> <api-key> [show-in-archive]
 ```
 
 ### Example
+
 ```bash
 python api_demo.py 192.168.1.100 ../../diashows/widget_demo.ddl.json my-secret-key
 

@@ -37,4 +37,3 @@ To keep your credentials out of the source code, follow these steps:
 
 - **Swipe Left**: Previous Slide (`/api/show/previous`)
 - **Swipe Right**: Next Slide (`/api/show/next`)
-- **Swipe Up**: Stop Show (`/api/show/stop`)

@@ -19,6 +19,7 @@ and reference client implementations in seven languages.
 | [`sensor.md`](sensor.md) | Sensor interface specification |
 | [`api/`](api/) | Reference REST API clients (Python, Dart, Go, Node.js, C#, Java, ESP32) |
 | [`sensor/`](sensor/) | Reference sensor-node implementations (Python, Dart, Go, Rust, ESP32) |
+| [`diashows/`](diashows/) | Example DDL shows — a plain `.ddl.json` and a packaged `.ddlz` |
 
 ## REST API
 
@@ -98,6 +99,33 @@ data schema, error handling). Reference sensor-node implementations live in
 | [Go](sensor/go/) | `sensor/go/main.go` | Linux build reads real I²C; other platforms get a stub |
 | [Rust](sensor/rust/) | `sensor/rust/src/` | `cargo build --release` |
 | [ESP32](sensor/esp32/) | `sensor/esp32/esp32.ino` | Arduino sketch, on-device HTTPS with self-signed cert |
+
+## Example shows
+
+The [`diashows/`](diashows/) directory contains two ready-to-play examples
+that exercise the two supported show formats:
+
+| File | Format | What it demonstrates |
+|------|--------|----------------------|
+| [`widget_demo.ddl.json`](diashows/widget_demo.ddl.json) | Plain DDL JSON | Widget overlays (clock, timer, weather), mixed slide types — image, video, Lottie, web, PDF — and per-slide captions/transitions. References remote URLs and `asset://` resources bundled in the app. |
+| [`amphibia.ddlz`](diashows/amphibia.ddlz) | Packaged ZIP bundle | A self-contained show: 18 amphibian photos plus the `.ddl.json` packed into a single `.ddlz` archive (no network required). Useful as an upload target for the REST API clients. |
+
+A `.ddl.json` file is a single JSON document validated against
+[`ddl-schema.json`](ddl-schema.json). A `.ddlz` is a ZIP archive bundling the
+JSON together with its referenced media (images, videos, Lottie files, …)
+under a `diashows/` and `images/` layout — pick `.ddlz` when you want the
+show to run offline or be transferred as one file.
+
+Load a show in the app via **Library → Import**, or push it to a running
+Display Server with any of the reference clients:
+
+```bash
+# Python
+python api/python/api_demo.py <ip> diashows/amphibia.ddlz <key>
+
+# Dart
+dart api/dart/bin/api_demo.dart <ip> diashows/widget_demo.ddl.json <key>
+```
 
 ## About the DiashowDL app
 

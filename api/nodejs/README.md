@@ -1,6 +1,6 @@
 # Diashow Node.js API Demo
 
-A professional Node.js implementation of the Diashow API client, allowing you to upload, start, and control presentations via the command line.
+A Node.js implementation of the Diashow API client, allowing you to upload, start, and control presentations via the command line.
 
 ## Prerequisites
 
