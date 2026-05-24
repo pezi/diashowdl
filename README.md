@@ -9,6 +9,13 @@ material a third party needs to write DDL shows or build integrations:
 the DDL specification, JSON Schema, REST API and sensor interface docs,
 and reference client implementations in seven languages.
 
+## App Stores
+
+![Google App Store](https://play.google.com/store/apps/details?id=app.flutterdev.diashowdl), ![Windows App Store](
+https://apps.microsoft.com/detail/9mxcp4npn9hc) and ![Amazon App Store](https://www.amazon.com/gp/product/B0H111WPHY)
+
+iOS, macOs and Linux - coming soon.
+
 ## What's in this repo
 
 | Path | Purpose |
